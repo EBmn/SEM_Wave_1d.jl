@@ -6,8 +6,8 @@ using LinearAlgebra
 using TimerOutputs
 
 
-include("SEM_Wave_1d.jl")
-
+#include("SEM_Wave_1d.jl")
+using SEM_Wave_1d
 #=
 Here we conduct an MMS-test for the Laplacian and plot the results for different values of N
 =#
