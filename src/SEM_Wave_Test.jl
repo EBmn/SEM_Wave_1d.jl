@@ -20,11 +20,12 @@ function main()
     #set up the time interval, the number of elements, the degree of the interpolation polynomials
 
     Tend = 6.0
-    nsteps = 9000
+    nsteps = 80000
 
-    xl = -1
+    xl = 0
     xr = 1
-    NumberOfNodes = 321
+    #NumberOfNodes = 321
+    NumberOfNodes = 3211
     nodes = zeros(NumberOfNodes)
     
     range = LinRange(xl, xr, NumberOfNodes)
@@ -33,7 +34,7 @@ function main()
         nodes[i] = range[i]
     end
 
-    N = 5 #number of points we interpolate in for each element
+    N = 3 #number of points we interpolate in for each element
     
 
     #set up some inital conditions and the values of the driving term f
@@ -45,7 +46,16 @@ function main()
     uStart = zeros(totalPointCount)
     uStartDer = zeros(totalPointCount)
 
+    p = 4
+    q = 5
     omega = 6.0
+
+    x = SEM_Wave_1d.ConstructX(nodes, quadpoints)
+    fVals = RightHandSide(x, Tend, p, q, omega)
+
+    uStart = Reference(x, 0, p, q, omega)
+
+    #=
 
     epsilon = 0.1
 
@@ -59,12 +69,14 @@ function main()
 
         end
     end
+    =#
 
     animate = true
     snapshotFrequency = 100
 
-    #SEM_Wave_1d.simulate(nodes, nsteps, Tend, N, fVals, omega, uStart, animate, snapshotFrequency)
-    
+    #SEM_Wave_1d.Simulate(nodes, nsteps, Tend, N, fVals, omega, uStart, animate, snapshotFrequency)
+
+    #=
     simul = SEM_Wave_1d.SEM_Wave(nodes, nsteps, Tend, N, fVals, omega)
 
     simul.useMMS = true
@@ -115,13 +127,28 @@ function main()
     plt = plot(x[2:end-1], u_xx[2:end-1]-lapVals[2:end-1])
     
 
-
+=#
     #very confused about why res is printed when one runs this if one makes Simulate return simul.uNow 
-    #out = SEM_Wave_1d.Simulate(nodes, nsteps, Tend, N, fVals, omega, uStart, uStartDer, animate, snapshotFrequency)
-
-
+    out = SEM_Wave_1d.Simulate(nodes, nsteps, Tend, N, fVals, omega, uStart, uStartDer, animate, snapshotFrequency)
+    println(maximum(abs.(out - Reference(x, Tend, p, q, omega))))
+    #vals = RightHandSide(x, Tend, p, q, omega)
+    #plt = plot(x, vals)
+    #display(plt)
 
 end
 
 
+
+function Reference(x, t, p, q, omega)
+    #outputs the reference solution of the type x^p*(1-x)^q * cos(\omega*t) evaluated at x, t
+    out = (x.^p .* (-x .+ 1).^q) .* cos(omega*t)
+end
+
+function RightHandSide(x, t, p, q, omega)
+    #the Refereence_xx - Reference_tt, evaluated at x, t
+    out = (p*(p-1)*x.^(p-2).*(-x .+ 1).^q - 2*p*q*x.^(p-1).*(-x .+ 1).^(q-1) + q*(q-1)*x.^p .*(-x .+ 1).^(q-2)) + 
+           omega^2*(x.^p .* (-x .+ 1).^q)
+           #SEM_Wave_1d already multiplies all this by cos(omega*t)
+
+end
 

@@ -114,7 +114,7 @@ function GenerateConvPlot(ordersList, numberOfNodesList, timestepsList, numberOf
 
     end
 
-    savefig(plt, "convplot.png")
+    display(plt)
 
 end
 

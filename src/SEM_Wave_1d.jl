@@ -116,7 +116,6 @@ function Simulate(nodes, nsteps, Tend, N, fVals, omega, uStart, uStartDer, anima
     simul = SEM_Wave(nodes, nsteps, Tend, N, fVals, omega)
 
     Initialise!(simul, uStart, uStartDer)
-    
 
     #create an Animation if one is asked for
     if (animate == true)
@@ -137,6 +136,7 @@ function Simulate(nodes, nsteps, Tend, N, fVals, omega, uStart, uStartDer, anima
         #making the Animation is very slow compared to the actual calculations made here.
         #store a frame in our Animation once every snapshotFrequency steps
         if (animate == true && n%snapshotFrequency == 0)
+            #plot(simul.x, simul.uNow, xlims=(nodes[1],nodes[end]), ylims=(-0.02, 0.02))
             plot(simul.x, simul.uNow, xlims=(nodes[1],nodes[end]), ylims=(-plotHeight, plotHeight))
             frame(anim)
             #println(n)
@@ -188,6 +188,7 @@ function LaplaceCalculation(simul::SEM_Wave, u::Vector{Float64})
 
         u_k .= GetDegreesOfFreedom(simul, k, u)
 
+        #what exactly does this multiply and add again? v_k = (2/delta_x_k) * G * u_k + 0 perhaps? 
         mul!(v_k, simul.G, u_k, 2/delta_x_k, 0)
 
         SetDegreesOfFreedom!(simul, k, laplaceVals, v_k, true)
@@ -251,7 +252,7 @@ function ForcingTerm(simul::SEM_Wave, stepnumber::Int64)
 
         end
 
-        forcingVals = forcingVals.*simul.inverseM * cos(simul.omega*(stepnumber-1)*simul.timestep)
+        forcingVals = forcingVals .* simul.inverseM * cos(simul.omega*(stepnumber-1)*simul.timestep)
 
     end
 
@@ -311,6 +312,7 @@ function ConstructG(QuadPoints::Vector{Float64}, QuadWeights::Vector{Float64})
         end
     end
 
+    #this is where values of c^2(x_i) are most easily added
     return transpose(D)*(QuadWeights.*D)
 
 end
