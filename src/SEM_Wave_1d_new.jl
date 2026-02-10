@@ -701,6 +701,8 @@ function Waveholtz(simul::SEM_Wave, omega::Float64, fVals::Vector{Float64}, nIte
 
     end
 
+    return simul.uFiltered
+
 end
 
 

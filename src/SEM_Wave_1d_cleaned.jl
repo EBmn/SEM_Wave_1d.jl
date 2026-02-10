@@ -1,4 +1,5 @@
 
+### mms.jl has changed since this was written, so if the mms functionality is going to be used, changes will be needed. cf. SEM_Wave_2d.jl ###
 
 module SEM_Wave_1d
 
@@ -54,7 +55,7 @@ mutable struct SEM_Wave
     function SEM_Wave(
         boundaryCoordinates::Vector{Float64},   # coordinates of xl and xr
         K::Int64,                               # number of elements
-        N::Int64,                               # degree of interpolation polynomials: N+1 points in every element
+        N::Int64,                               # degree of interpolation polynomials: N + 1 points in every element
         c_square::Function                      # wave speed
         )
         
@@ -86,13 +87,13 @@ mutable struct SEM_Wave
         M, M_b = ConstructMs(nodes, QuadWeights)
 
         # change some coefficients in the MMS
-        MMS_j = MMS.MMS_jet(1, 2)
+        MMS_j = MMS.MMS_jet(ones(2, 1), 2)
         MMS_j.coeff[1, 2] = 2.0
         MMS_j.coeff[2, 1] = exp(1)
         MMS_j.coeff[2, 3] = -2
         MMS_j.coeff[1, 3] = (1 + sqrt(5))/2
-
-            new(nodes, N, x, c_square, nsteps, Tend, timestep,
+        
+                new(nodes, N, x, c_square, nsteps, Tend, timestep,
                 uPrev, uNow, uNext, uFiltered, uDerFiltered, useWaveholtz, fVals, omega, bc, g, QuadPoints, QuadWeights, G, M, M_b, useMMS, MMS_j)
         
     end
@@ -105,6 +106,8 @@ function Simulate(simul::SEM_Wave, uStart, uStartDer, Tend::Float64, nsteps::Int
     # creates a gif named animationName if animate == true
     # snapshotFrequency decides how many steps are made before a frame is saved in the gif
     # the y-axis shown in the gif is [-plotHeight, plotheight]
+
+    plotheight = maximum(uStart)
 
     Initialise!(simul, uStart, uStartDer, Tend, nsteps, forcing, omega, bc, g)
     
@@ -152,34 +155,34 @@ end
 
 function Waveholtz(simul::SEM_Wave, forcing::Vector{Float64}, omega::Float64, bc::Vector{Float64}, g::Vector{Float64}, tol::Float64)
 
-    #Waveholtz-specific parameters for the wave solver
+    # Waveholtz-specific parameters for the wave solver
     simul.fVals = -forcing
     simul.omega = omega
     simul.Tend = 2*pi/omega
     simul.bc = bc
-    
-    #let simul know that we are using waveholtz and want the filtered solution
+
+    # let simul know that we are using Waveholtz and want the filtered solution
     simul.useWaveholtz = true
 
-    #appropriate parameters for the wave solver:
+    # appropriate parameters for the wave solver:
     delta_x = minimum(simul.x[2:end] - simul.x[1:end-1])
     nsteps = Integer(ceil(1.5*simul.Tend/delta_x))
-    
 
-    #starting guess
+
+    # starting guess
     uStart = zeros(length(simul.x))
     uStartDer = zeros(length(simul.x))
     oldAppx = zeros(2*length(simul.x))
 
     animate = false     #we do not want any animations of the wave eq solutions
     res = Inf
-    
-    
+
+
     nIter = 0
     maxIter = 20000
 
     while res > tol
-        
+
         SEM_Wave_1d.Simulate(simul::SEM_Wave, uStart, uStartDer, simul.Tend::Float64, nsteps::Int64, simul.fVals::Vector{Float64}, omega::Float64, bc::Vector{Float64}, g::Vector{Float64})
 
         uStart = simul.uFiltered
@@ -188,7 +191,7 @@ function Waveholtz(simul::SEM_Wave, forcing::Vector{Float64}, omega::Float64, bc
         #println(maximum(uStart))
 
         #println(norm(simul.uFiltered - oldAppx[1:length(simul.x)]))
-        
+
         #relative H2-residual
         res = (LpNorm(simul, simul.uFiltered, oldAppx[1:length(simul.x)], 2)^2 + 
                LpNorm(simul, simul.uDerFiltered, oldAppx[length(simul.x) + 1:end], 2)^2)^(0.5)/
@@ -449,7 +452,6 @@ function LaplaceTerm(simul::SEM_Wave, u::Vector{Float64})
         #mul!(v_k, G, u_k, 2/delta_x_k, 0)
 
         
-
         mul!(v_k, G, u_k.*simul.c_square.(x_k), 2/delta_x_k, 0)
 
         SetDegreesOfFreedom!(simul, k, laplaceVals, v_k, true)
@@ -516,13 +518,13 @@ end
 
 
 function BoundaryTerm(simul::SEM_Wave, stepnumber::Int64)
-    
+
     boundaryVals = zeros(length(simul.x))
-    
+
     t = simul.timestep*(stepnumber-1) #current timepoint
-    
+
     alpha = simul.bc[1]; beta = simul.bc[2]
-    
+
     if simul.useMMS == false
 
         boundaryVals[1] = simul.g[1]*simul.c_square(simul.x[1])
