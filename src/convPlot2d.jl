@@ -87,9 +87,13 @@ function main()
 
             uStart = exp.(-((simul.y .- 0.5*(yr+yl))/0.1).^2) * exp.(-((simul.x .- 0.5*(xr+xl))/0.1).^2)'
 
-            uStartDer = zeros(length(simul.y), 1) * zeros(1, length(simul.x))
+            uStartDer = zeros(length(simul.y), length(simul.x))
 
             SEM_Wave_2d.Simulate(simul, uStart, uStartDer, Tend, nsteps, fVals, omega, bc, g, false)
+
+            if j == length(numberOfElements)
+                reference = zeros(length(simul.y), length(simul.x))
+            end
 
 
             ### Compare to finest run ###

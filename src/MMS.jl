@@ -88,7 +88,6 @@ function MMSfun(x::Float64, idx::Int64, idim::Int, MMS)
         else
 
             u = 0.0
-
         end
         
     elseif MMS.type[idim] == 4

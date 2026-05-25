@@ -296,7 +296,8 @@ function WaveholtzGMRES(simul::SEM_Wave, forcing::Vector{Float64}, omega::Float6
 end
 
 
-function Waveholtz(simul::SEM_Wave, omega::Float64, fVals::Vector{Float64}, nIter::Int64)
+#=
+function Waveholtz(simul::SEM_Wave, omega::Float64, fVals::Vector{Float64}, nIter::Int64) 
 
     #Waveholtz-specific parameters for the wave solver
     simul.fVals = -fVals
@@ -326,7 +327,7 @@ function Waveholtz(simul::SEM_Wave, omega::Float64, fVals::Vector{Float64}, nIte
     end
 
 end
-
+=#
 
 function Initialise!(simul::SEM_Wave, uStart::Vector{Float64}, uStartDer::Vector{Float64}, Tend::Float64, nsteps::Int64, forcing::Vector{Float64}, omega::Float64, bc::Vector{Float64}, g::Vector{Float64})
     
@@ -378,6 +379,8 @@ function Initialise!(simul::SEM_Wave, uStart::Vector{Float64}, uStartDer::Vector
                                                                                             F)
 
 end
+
+
 
 
 function MakeStep!(simul::SEM_Wave, stepnumber::Int64)    

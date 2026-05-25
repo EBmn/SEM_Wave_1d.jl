@@ -18,27 +18,29 @@ using .MMS
 
 function main()
 
-    
+
     ###### set up the time interval, the number of elements, the degree of the interpolation polynomials ######
-    
-    
+
+
     xl = -1.0
     xr = 1.0
     yl = -1.0
     yr = 1.0
-    
 
 
-    N = 8   # degree of interpolation polynomials
-    Kx = 30 # number of elements in x-direction
-    Ky = 30 # number of elements in y-direction
+
+    N = 4   # degree of interpolation polynomials
+    Kx = 100 # number of elements in x-direction
+    Ky = 100 # number of elements in y-direction
 
     heaviside(x) = 0.5 * (sign(x) + 1)
 
     #c_square(x, y) = 1 - 0.999*((heaviside(x-0.2) - heaviside(x-0.3)) .* (heaviside(y+0.9) - heaviside(y-0.9)) + (heaviside(x+0.3) - heaviside(x+0.2)) .* (heaviside(y+0.9) - heaviside(y-0.9)))
     #c_square(x, y) = 1 - 0.9999*((heaviside(x-0.025) - heaviside(x-1)) .* (heaviside(y+0.5) - heaviside(y)) + (heaviside(x+1) - heaviside(x+0.025)) .* (heaviside(y+0.5) - heaviside(y)))
     #c_square(x, y) = (1 - 0.999*((heaviside(x-0.305) - heaviside(x-1)) .* (heaviside(y+0.5) - heaviside(y)) + (heaviside(x+0.295) - heaviside(x-0.295)) .* (heaviside(y+0.5) - heaviside(y)) + (heaviside(x+1) - heaviside(x+0.305)) .* (heaviside(y+0.5) - heaviside(y)))).^2
+
     c_square(x, y) = 1 - 0.9*exp.(-((y .- 0.1)/0.1).^2) * exp.(-((x .+ 0.7)/0.1).^2)' - 0.9*exp.(-((y .+ 0.3)/0.1).^2) * exp.(-((x .- 0.27)/0.1).^2)'
+
     #c_square(x, y) = 2 - 1.9*exp.(-(y/0.05).^2) * exp.(-(x/0.1).^2)' - 1.9*exp.(-((y .- 1.0)/0.05).^2) * exp.(-((x .- 1.0)/0.1).^2)'
     #c_square(x, y) = 1.0
 
@@ -50,17 +52,17 @@ function main()
     #fVals = 10*exp.(-((simul.y .- 0.3)/0.01).^2) * exp.(-((simul.x .+ 0.6)/0.01).^2)' + 10*exp.(-((simul.y .+ 0.3)/0.01).^2) * exp.(-((simul.x .+ 0.6)/0.01).^2)'
     #fVals = 10*exp.(-((simul.y .- 0.5)/0.01).^2) * exp.(-((simul.x .- 0.5)/0.01).^2)'
     #fVals = zeros(length(simul.y), length(simul.x))
-    
-    omega = 4.0*pi
 
-    
+    omega = 4*pi
+
+
     #fVals = omega^2*exp.(-((simul.y .+ 0.8)/0.01).^2) * exp.(-((simul.x .- 0.3)/0.01).^2)' + omega^2*exp.(-((simul.y .+ 0.8)/0.01).^2) * exp.(-((simul.x .+ 0.3)/0.01).^2)'
 
     #epsilon = 1e-2
     #omega = 2*pi + epsilon
-    
-    a = 1/sqrt(2)
-    #a = 0.0
+
+    #a = 1/sqrt(2)
+    a = 0.0
     b = sqrt(1-a^2)
     bc = [a, b]
 
@@ -71,15 +73,23 @@ function main()
     #SEM_Wave_2d.Waveholtz(simul, omega, fVals, bc, g, 0.001)
     #u_WHI = simul.uFiltered
     
-    #u_0, u_1, nIters = SEM_Wave_2d.WaveholtzGMRES(simul, omega, fVals, bc, g, 1e-6)
+    #u_0, u_1, nIters = SEM_Wave_2d.WaveholtzGMRES(simul, omega, fVals, bc, g, 1e-3)
+    #u_0, u_1, history = SEM_Wave_2d.WaveholtzGMRESnew(simul, omega, fVals, bc, g)
     
-    nIter = 40
-    u_0, u_1, history = SEM_Wave_2d.WaveholtzConvGMRES(simul, omega, fVals, bc, g, nIter)
-    println(history)
+
+
+
+    #nIter = 40
+    #u_0, u_1, history = SEM_Wave_2d.WaveholtzConvGMRES(simul, omega, fVals, bc, g, nIter)
+    #println(history.data[:resnorm])
+    
+    #plt = plot(history.data[:resnorm], yscale=:log10)
+    #savefig(plt, "gmresConvHistory")
+    
 
     
     #SEM_Wave_2d.WaveholtzAnimation(simul, omega, fVals, bc, g, 50)
-    #SEM_Wave_2d.WaveholtzConvHistory(simul, omega, fVals, bc, g, 500)
+    u_WHI, data = SEM_Wave_2d.WaveholtzConvHistory(simul, omega, fVals, bc, g, 30)
     
     #res1 = SEM_Wave_2d.ErrorEstimate(simul, u_WHI, fVals, omega)
     #res2 = SEM_Wave_2d.ErrorEstimate(simul, u_0, fVals, omega)
@@ -91,8 +101,8 @@ function main()
     #plt = surface(simul.x, simul.y[end:-1:1], log10.(abs.(simul.uFiltered)))
     #plt = surface(simul.x, simul.y[end:-1:1], simul.uFiltered)
     #plt = heatmap(simul.x, simul.y, log10.(abs.(simul.uFiltered)))
-    plt = heatmap(simul.x, simul.y, log10.(abs.(u_0)))
-    #plt = heatmap(simul.x, simul.y, log10.(abs.(u_WHI)))
+    #plt = heatmap(simul.x, simul.y, log10.(abs.(u_0)))
+    plt = heatmap(simul.x, simul.y, log10.(abs.(u_WHI[1:length(simul.x), 1:end])))
     
     #plt = surface(simul.x, simul.y[end:-1:1], simul.c_square)
     #plt = surface(simul.x, simul.y[end:-1:1], fVals)

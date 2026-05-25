@@ -117,7 +117,7 @@ function main()
 
 
 
-    # troginometric test
+    # trigonometric test
     #=
     simul.MMS_j.type = [2 2 2]
     simul.MMS_j.coeff[1, 1] = 1.98765

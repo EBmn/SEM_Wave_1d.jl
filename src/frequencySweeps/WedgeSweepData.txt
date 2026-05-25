@@ -1,0 +1,1593 @@
+data from an experiment run with spaceTol 1e-1, systemTol 1e-3, order 8 spectral elements
+on the wedge problem with Neumann boundary
+
+(upper bound on) length of domain in wavelengths: 4.875916873847411
+Points per (shortest) wavelength: 5.106894772573147
+DoFs: 900
+WHI || || omega: 1.0 || number of elements: 5 by 3
+Number of timesteps for waveholtz: 3636 with a step size of 0.0017280487643508214
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.058515557786358356
+iteration: 3 || residual: 0.004358424701911666
+iteration: 4 || residual: 0.0005261986854880492
+gmres || || omega: 1.0 || number of elements: 5 by 3
+time step size for the wave solver: 0.0017280487643508214
+(upper bound on) length of domain in wavelengths: 6.826283623386374
+Points per (shortest) wavelength: 5.326266759875484
+DoFs: 2368
+WHI || || omega: 1.4 || number of elements: 9 by 5
+Number of timesteps for waveholtz: 4502 with a step size of 0.0009968879398330245
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.0241305400416747
+iteration: 3 || residual: 0.0009009918668849983
+gmres || || omega: 1.4 || number of elements: 9 by 5
+time step size for the wave solver: 0.0009968879398330245
+(upper bound on) length of domain in wavelengths: 8.776650372925337
+Points per (shortest) wavelength: 5.496243594152223
+DoFs: 3479
+WHI || || omega: 1.8 || number of elements: 10 by 6
+Number of timesteps for waveholtz: 4040 with a step size of 0.0008640243821754107
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.14164752472898062
+iteration: 3 || residual: 0.031844537850095805
+iteration: 4 || residual: 0.00870011874713782
+iteration: 5 || residual: 0.0017661427685851695
+iteration: 6 || residual: 0.00048431399225254136
+gmres || || omega: 1.8 || number of elements: 10 by 6
+time step size for the wave solver: 0.0008640243821754107
+(upper bound on) length of domain in wavelengths: 10.727017122464304
+Points per (shortest) wavelength: 5.635854136088493
+DoFs: 6039
+WHI || || omega: 2.2 || number of elements: 14 by 8
+Number of timesteps for waveholtz: 4517 with a step size of 0.0006322765821220425
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.04812209812749707
+iteration: 3 || residual: 0.0029164690463613922
+iteration: 4 || residual: 0.00018198755319914824
+gmres || || omega: 2.2 || number of elements: 14 by 8
+time step size for the wave solver: 0.0006322765821220425
+(upper bound on) length of domain in wavelengths: 12.677383872003265
+Points per (shortest) wavelength: 5.754778041755825
+DoFs: 7738
+WHI || || omega: 2.6 || number of elements: 15 by 9
+Number of timesteps for waveholtz: 4195 with a step size of 0.0005760690663958545
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.34272455466304264
+iteration: 3 || residual: 0.18612428358080552
+iteration: 4 || residual: 0.09943476841816601
+iteration: 5 || residual: 0.03908774534298603
+iteration: 6 || residual: 0.02032864407006121
+iteration: 7 || residual: 0.009198349107998216
+iteration: 8 || residual: 0.003966018338900564
+iteration: 9 || residual: 0.0020700383642567283
+iteration: 10 || residual: 0.0008888255882743025
+gmres || || omega: 2.6 || number of elements: 15 by 9
+time step size for the wave solver: 0.0005760690663958545
+(upper bound on) length of domain in wavelengths: 14.62775062154223
+Points per (shortest) wavelength: 5.858643422889259
+DoFs: 11524
+WHI || || omega: 3.0 || number of elements: 19 by 11
+Number of timesteps for waveholtz: 4525 with a step size of 0.00046284974638523653
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.6155297427732705
+iteration: 3 || residual: 0.34196501315613587
+iteration: 4 || residual: 0.30512208071155367
+iteration: 5 || residual: 0.280731121099777
+iteration: 6 || residual: 0.23168527507969086
+iteration: 7 || residual: 0.14040040718413216
+iteration: 8 || residual: 0.1012280150656449
+iteration: 9 || residual: 0.08135628753795794
+iteration: 10 || residual: 0.06154471235754768
+iteration: 11 || residual: 0.04810944585425466
+iteration: 12 || residual: 0.03220629610355411
+iteration: 13 || residual: 0.02551619227693668
+iteration: 14 || residual: 0.018619743458397432
+iteration: 15 || residual: 0.014174454457643504
+iteration: 16 || residual: 0.010707821280076277
+iteration: 17 || residual: 0.007542441733789989
+iteration: 18 || residual: 0.006023974761827712
+iteration: 19 || residual: 0.004207007915091323
+iteration: 20 || residual: 0.003333881302628098
+iteration: 21 || residual: 0.0023947887656339114
+iteration: 22 || residual: 0.0017921274692997192
+iteration: 23 || residual: 0.0013749578250181842
+iteration: 24 || residual: 0.000971904135228484
+gmres || || omega: 3.0 || number of elements: 19 by 11
+time step size for the wave solver: 0.00046284974638523653
+(upper bound on) length of domain in wavelengths: 16.57811737108119
+Points per (shortest) wavelength: 5.951024989463324
+DoFs: 15345
+WHI || || omega: 3.4 || number of elements: 22 by 13
+Number of timesteps for waveholtz: 4670 with a step size of 0.0003957164193966234
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.750054905805925
+iteration: 3 || residual: 0.4324662321698295
+iteration: 4 || residual: 0.30378696272752226
+iteration: 5 || residual: 0.2758452402449519
+iteration: 6 || residual: 0.29817856611825877
+iteration: 7 || residual: 0.34243006871395215
+iteration: 8 || residual: 0.4085049791619467
+iteration: 9 || residual: 0.4067134364014822
+iteration: 10 || residual: 0.2988224594157854
+iteration: 11 || residual: 0.2086217872334667
+iteration: 12 || residual: 0.16392960332100598
+iteration: 13 || residual: 0.1567375469578785
+iteration: 14 || residual: 0.16185418395349385
+iteration: 15 || residual: 0.16255784891503613
+iteration: 16 || residual: 0.15919696949975543
+iteration: 17 || residual: 0.14794438576703647
+iteration: 18 || residual: 0.1223437834805926
+iteration: 19 || residual: 0.09540404981489321
+iteration: 20 || residual: 0.0816718424357089
+iteration: 21 || residual: 0.07959539930706971
+iteration: 22 || residual: 0.07714849512732372
+iteration: 23 || residual: 0.07061193739125086
+iteration: 24 || residual: 0.06560454876419823
+iteration: 25 || residual: 0.061188583542749
+iteration: 26 || residual: 0.052388416014591266
+iteration: 27 || residual: 0.04305929882511973
+iteration: 28 || residual: 0.03892367204805528
+iteration: 29 || residual: 0.037725837863570914
+iteration: 30 || residual: 0.03464355548347874
+iteration: 31 || residual: 0.03051568329400354
+iteration: 32 || residual: 0.02841350600119948
+iteration: 33 || residual: 0.026527140786092734
+iteration: 34 || residual: 0.02280608931097184
+iteration: 35 || residual: 0.01936122785569354
+iteration: 36 || residual: 0.018098735684283496
+iteration: 37 || residual: 0.01721845187961882
+iteration: 38 || residual: 0.015222998052888122
+iteration: 39 || residual: 0.013363322944088764
+iteration: 40 || residual: 0.012617019275205331
+iteration: 41 || residual: 0.01166434621322451
+iteration: 42 || residual: 0.009975649114091212
+iteration: 43 || residual: 0.008713286653011604
+iteration: 44 || residual: 0.008294060834785238
+iteration: 45 || residual: 0.0076983683389994844
+iteration: 46 || residual: 0.006654671296155215
+iteration: 47 || residual: 0.005934639470535487
+iteration: 48 || residual: 0.005655224374187888
+iteration: 49 || residual: 0.005134994341015111
+iteration: 50 || residual: 0.004375735204497348
+iteration: 51 || residual: 0.003933904418073124
+iteration: 52 || residual: 0.0037622643747301527
+iteration: 53 || residual: 0.0034010329088431835
+iteration: 54 || residual: 0.002916422946247569
+iteration: 55 || residual: 0.0026636457184089223
+iteration: 56 || residual: 0.0025359564175933525
+iteration: 57 || residual: 0.002253837490579054
+iteration: 58 || residual: 0.0019283790174342607
+iteration: 59 || residual: 0.0017814199059657692
+iteration: 60 || residual: 0.0016916537266053648
+iteration: 61 || residual: 0.001492154004593023
+iteration: 62 || residual: 0.0012867151355335966
+iteration: 63 || residual: 0.0012027704847976967
+iteration: 64 || residual: 0.0011323352432629473
+iteration: 65 || residual: 0.0009864553690490936
+gmres || || omega: 3.4 || number of elements: 22 by 13
+time step size for the wave solver: 0.0003957164193966234
+(upper bound on) length of domain in wavelengths: 18.528484120620156
+Points per (shortest) wavelength: 6.034341144909811
+DoFs: 18928
+WHI || || omega: 3.8 || number of elements: 24 by 14
+Number of timesteps for waveholtz: 4529 with a step size of 0.0003650849674715916
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.7481504584813357
+iteration: 3 || residual: 0.4642552207287547
+iteration: 4 || residual: 0.3324358081714465
+iteration: 5 || residual: 0.25928865963376063
+iteration: 6 || residual: 0.21394295993582702
+iteration: 7 || residual: 0.18551397615488707
+iteration: 8 || residual: 0.1698701796872824
+iteration: 9 || residual: 0.1650515248221208
+iteration: 10 || residual: 0.1695460299679035
+iteration: 11 || residual: 0.18212976385352436
+iteration: 12 || residual: 0.20264884644397915
+iteration: 13 || residual: 0.23338648106272245
+iteration: 14 || residual: 0.28148341923466497
+iteration: 15 || residual: 0.36310517479964904
+iteration: 16 || residual: 0.49611216122599366
+iteration: 17 || residual: 0.5764434947936656
+iteration: 18 || residual: 0.4541756451642392
+iteration: 19 || residual: 0.327316446362632
+iteration: 20 || residual: 0.24932965205787833
+iteration: 21 || residual: 0.20048335110975735
+iteration: 22 || residual: 0.1683389950141382
+iteration: 23 || residual: 0.14758828810728325
+iteration: 24 || residual: 0.13607892740935595
+iteration: 25 || residual: 0.1326277930057432
+iteration: 26 || residual: 0.13604987563376247
+iteration: 27 || residual: 0.14514786900577073
+iteration: 28 || residual: 0.1592545239547545
+iteration: 29 || residual: 0.1788574460706616
+iteration: 30 || residual: 0.2059551026961633
+iteration: 31 || residual: 0.2426228332950963
+iteration: 32 || residual: 0.2817000211852533
+iteration: 33 || residual: 0.2924167038512834
+iteration: 34 || residual: 0.25956801075573577
+iteration: 35 || residual: 0.21429779643611527
+iteration: 36 || residual: 0.17656183585749333
+iteration: 37 || residual: 0.14824739563791758
+iteration: 38 || residual: 0.12764391024029723
+iteration: 39 || residual: 0.11362385002844366
+iteration: 40 || residual: 0.10569036430512248
+iteration: 41 || residual: 0.10335325449715978
+iteration: 42 || residual: 0.10574425060835076
+iteration: 43 || residual: 0.11174016821639839
+iteration: 44 || residual: 0.12036462728803045
+iteration: 45 || residual: 0.1310706763884251
+iteration: 46 || residual: 0.14360772629416335
+iteration: 47 || residual: 0.15698564191749817
+iteration: 48 || residual: 0.1672723968455762
+iteration: 49 || residual: 0.1678189846868381
+iteration: 50 || residual: 0.15673286543256884
+iteration: 51 || residual: 0.13961563529073479
+iteration: 52 || residual: 0.12208189355702047
+iteration: 53 || residual: 0.10662986181644189
+iteration: 54 || residual: 0.09415693762938152
+iteration: 55 || residual: 0.0851578896707802
+iteration: 56 || residual: 0.07994103459973928
+iteration: 57 || residual: 0.0784173995392778
+iteration: 58 || residual: 0.07996328016475006
+iteration: 59 || residual: 0.0836030145405722
+iteration: 60 || residual: 0.0883504222366057
+iteration: 61 || residual: 0.09343212947425886
+iteration: 62 || residual: 0.09828400993230511
+iteration: 63 || residual: 0.10230381958291251
+iteration: 64 || residual: 0.1044952926161747
+iteration: 65 || residual: 0.10362657053470095
+iteration: 66 || residual: 0.0992464576205252
+iteration: 67 || residual: 0.0921961786084717
+iteration: 68 || residual: 0.08387120417125704
+iteration: 69 || residual: 0.07551909566516664
+iteration: 70 || residual: 0.06813294647311868
+iteration: 71 || residual: 0.062509739200464
+iteration: 72 || residual: 0.05917536828702436
+iteration: 73 || residual: 0.058201548461123166
+iteration: 74 || residual: 0.05913725957130026
+iteration: 75 || residual: 0.06119659083533454
+iteration: 76 || residual: 0.06356225613325896
+iteration: 77 || residual: 0.0656079355368318
+iteration: 78 || residual: 0.06699519434755244
+iteration: 79 || residual: 0.06765428709995489
+iteration: 80 || residual: 0.0676182506754998
+iteration: 81 || residual: 0.06678130891637513
+iteration: 82 || residual: 0.0648757606367186
+iteration: 83 || residual: 0.06175827422018855
+iteration: 84 || residual: 0.057639004966325874
+iteration: 85 || residual: 0.05304519581654872
+iteration: 86 || residual: 0.048664061974626846
+iteration: 87 || residual: 0.04517729446347526
+iteration: 88 || residual: 0.04307243442634355
+iteration: 89 || residual: 0.042453485435726156
+iteration: 90 || residual: 0.042990260519980214
+iteration: 91 || residual: 0.044085824823258776
+iteration: 92 || residual: 0.04513561241913042
+iteration: 93 || residual: 0.04572631798576291
+iteration: 94 || residual: 0.045737821366956026
+iteration: 95 || residual: 0.04533346509541901
+iteration: 96 || residual: 0.04478410096721698
+iteration: 97 || residual: 0.0441777298496697
+iteration: 98 || residual: 0.043297663926620794
+iteration: 99 || residual: 0.041838016456122985
+iteration: 100 || residual: 0.039700534511056026
+iteration: 101 || residual: 0.03709473093394321
+iteration: 102 || residual: 0.03445485739783789
+iteration: 103 || residual: 0.03228167948318909
+iteration: 104 || residual: 0.03095418087080393
+iteration: 105 || residual: 0.030559744290536504
+iteration: 106 || residual: 0.03085478631803677
+iteration: 107 || residual: 0.03140377023658022
+iteration: 108 || residual: 0.031787410525164955
+iteration: 109 || residual: 0.03175994036236756
+iteration: 110 || residual: 0.03132120616954741
+iteration: 111 || residual: 0.030686079147226333
+iteration: 112 || residual: 0.030121471559290007
+iteration: 113 || residual: 0.029716093402574303
+iteration: 114 || residual: 0.02929380295864639
+iteration: 115 || residual: 0.028575347795887527
+iteration: 116 || residual: 0.0274095211830244
+iteration: 117 || residual: 0.02587653624655792
+iteration: 118 || residual: 0.024249625113296196
+iteration: 119 || residual: 0.02287848075255942
+iteration: 120 || residual: 0.022036331439584673
+iteration: 121 || residual: 0.0217836366380312
+iteration: 122 || residual: 0.021940367607704635
+iteration: 123 || residual: 0.022196633789844867
+iteration: 124 || residual: 0.02227159210467309
+iteration: 125 || residual: 0.02202793297150742
+iteration: 126 || residual: 0.02151444320543958
+iteration: 127 || residual: 0.020925732176960546
+iteration: 128 || residual: 0.020470279389079873
+iteration: 129 || residual: 0.020207877855468587
+iteration: 130 || residual: 0.020000021139043877
+iteration: 131 || residual: 0.019628786918706637
+iteration: 132 || residual: 0.018960230425338544
+iteration: 133 || residual: 0.018024410774689702
+iteration: 134 || residual: 0.016997248104538554
+iteration: 135 || residual: 0.01611921125710707
+iteration: 136 || residual: 0.015580297956800266
+iteration: 137 || residual: 0.015417708756452396
+iteration: 138 || residual: 0.015498627333335086
+iteration: 139 || residual: 0.015605775030059053
+iteration: 140 || residual: 0.01555427085350679
+iteration: 141 || residual: 0.015270907664031606
+iteration: 142 || residual: 0.014816391862006579
+iteration: 143 || residual: 0.014345927200183416
+iteration: 144 || residual: 0.01400965685880388
+iteration: 145 || residual: 0.013842446598383348
+iteration: 146 || residual: 0.01373824465341482
+iteration: 147 || residual: 0.013536417455222952
+iteration: 148 || residual: 0.013134135429069022
+iteration: 149 || residual: 0.012543082168412337
+iteration: 150 || residual: 0.011879839794948324
+iteration: 151 || residual: 0.011309406615420691
+iteration: 152 || residual: 0.010961480364887801
+iteration: 153 || residual: 0.010856679083648024
+iteration: 154 || residual: 0.010897357729434228
+iteration: 155 || residual: 0.010932412942217043
+iteration: 156 || residual: 0.010841066295261027
+iteration: 157 || residual: 0.01058616224058406
+iteration: 158 || residual: 0.010224365262943498
+iteration: 159 || residual: 0.009872391218753588
+iteration: 160 || residual: 0.009634509607302128
+iteration: 161 || residual: 0.009528904228963802
+iteration: 162 || residual: 0.009475854105469283
+iteration: 163 || residual: 0.009360040921174474
+iteration: 164 || residual: 0.009107220589769574
+iteration: 165 || residual: 0.008722927334514968
+iteration: 166 || residual: 0.00828644701091807
+iteration: 167 || residual: 0.007911236015747536
+iteration: 168 || residual: 0.007684916348754669
+iteration: 169 || residual: 0.007617424931549648
+iteration: 170 || residual: 0.007637263331515174
+iteration: 171 || residual: 0.007639820679103112
+iteration: 172 || residual: 0.00754642178319515
+iteration: 173 || residual: 0.007339532732475149
+iteration: 174 || residual: 0.007066431476588397
+iteration: 175 || residual: 0.006812201998742357
+iteration: 176 || residual: 0.0066478941175933505
+iteration: 177 || residual: 0.00658159324291024
+iteration: 178 || residual: 0.006554138107364726
+iteration: 179 || residual: 0.006483920072453206
+iteration: 180 || residual: 0.006319064593800871
+iteration: 181 || residual: 0.006063334813994444
+iteration: 182 || residual: 0.005771740096330425
+iteration: 183 || residual: 0.005522517345528603
+iteration: 184 || residual: 0.005374465724281173
+iteration: 185 || residual: 0.005331138310511514
+iteration: 186 || residual: 0.00534039633522442
+iteration: 187 || residual: 0.005330005401751303
+iteration: 188 || residual: 0.005248765295126681
+iteration: 189 || residual: 0.005089506880236797
+iteration: 190 || residual: 0.004889492380586265
+iteration: 191 || residual: 0.004709638261090491
+iteration: 192 || residual: 0.004597806142095239
+iteration: 193 || residual: 0.004556376642541836
+iteration: 194 || residual: 0.004541858156943233
+iteration: 195 || residual: 0.004497006572799276
+iteration: 196 || residual: 0.004386309224633121
+iteration: 197 || residual: 0.004213108603416435
+iteration: 198 || residual: 0.004016106219485951
+iteration: 199 || residual: 0.003849371345223977
+iteration: 200 || residual: 0.003752153517857601
+iteration: 201 || residual: 0.0037244718916066544
+iteration: 202 || residual: 0.0037284569106286634
+iteration: 203 || residual: 0.0037143183874523257
+iteration: 204 || residual: 0.0036487572654186886
+iteration: 205 || residual: 0.0035298700310465135
+iteration: 206 || residual: 0.003386076898230683
+iteration: 207 || residual: 0.00326050268405307
+iteration: 208 || residual: 0.0031851283109788123
+iteration: 209 || residual: 0.003159350869458501
+iteration: 210 || residual: 0.003151430378821712
+iteration: 211 || residual: 0.003121457930743711
+iteration: 212 || residual: 0.0030454684240001023
+iteration: 213 || residual: 0.002926654548827061
+iteration: 214 || residual: 0.0027924878434469396
+iteration: 215 || residual: 0.00268038099395249
+iteration: 216 || residual: 0.002616405476951172
+iteration: 217 || residual: 0.002598824750758349
+iteration: 218 || residual: 0.002600238549099257
+iteration: 219 || residual: 0.002586377739679439
+iteration: 220 || residual: 0.0025356101948185356
+iteration: 221 || residual: 0.0024485384079603895
+iteration: 222 || residual: 0.002346399023620095
+iteration: 223 || residual: 0.0022594913619355156
+iteration: 224 || residual: 0.002209042619079887
+iteration: 225 || residual: 0.0021930729310386276
+iteration: 226 || residual: 0.002188555288345606
+iteration: 227 || residual: 0.0021677954190284566
+iteration: 228 || residual: 0.0021148014283718505
+iteration: 229 || residual: 0.00203256684769794
+iteration: 230 || residual: 0.0019406920214358435
+iteration: 231 || residual: 0.0018650716698333705
+iteration: 232 || residual: 0.0018229361206723634
+iteration: 233 || residual: 0.0018118454917944277
+iteration: 234 || residual: 0.0018120469906963313
+iteration: 235 || residual: 0.0017999884283740185
+iteration: 236 || residual: 0.0017616455553613865
+iteration: 237 || residual: 0.001698664509300553
+iteration: 238 || residual: 0.001626699519861981
+iteration: 239 || residual: 0.001566922742156651
+iteration: 240 || residual: 0.001533335931338493
+iteration: 241 || residual: 0.0015234877624083819
+iteration: 242 || residual: 0.001520755761417166
+iteration: 243 || residual: 0.0015059950453768212
+iteration: 244 || residual: 0.0014686365565789925
+iteration: 245 || residual: 0.001411378488945563
+iteration: 246 || residual: 0.0013482399229129644
+iteration: 247 || residual: 0.0012971350033074644
+iteration: 248 || residual: 0.0012693882317458874
+iteration: 249 || residual: 0.0012624426837474759
+iteration: 250 || residual: 0.001262108313807817
+iteration: 251 || residual: 0.0012522234696808212
+iteration: 252 || residual: 0.001223724694658575
+iteration: 253 || residual: 0.001178552103612776
+iteration: 254 || residual: 0.0011281353229461314
+iteration: 255 || residual: 0.0010872061277710904
+iteration: 256 || residual: 0.0010649416396063126
+iteration: 257 || residual: 0.0010588989623812556
+iteration: 258 || residual: 0.001057131135019695
+iteration: 259 || residual: 0.0010464473257936287
+iteration: 260 || residual: 0.0010199247030019936
+iteration: 261 || residual: 0.0009799042868303687
+gmres || || omega: 3.8 || number of elements: 24 by 14
+time step size for the wave solver: 0.0003650849674715916
+(upper bound on) length of domain in wavelengths: 20.478850870159118
+Points per (shortest) wavelength: 6.110307556929642
+DoFs: 23940
+WHI || || omega: 4.2 || number of elements: 27 by 16
+Number of timesteps for waveholtz: 4646 with a step size of 0.0003219966641647493
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.6993144999711313
+iteration: 3 || residual: 0.4456215663524751
+iteration: 4 || residual: 0.31636176114306835
+iteration: 5 || residual: 0.24338213225860403
+iteration: 6 || residual: 0.19741698486564116
+iteration: 7 || residual: 0.16605820515734082
+iteration: 8 || residual: 0.14339348933559312
+iteration: 9 || residual: 0.12629257073194713
+iteration: 10 || residual: 0.11295530959710046
+iteration: 11 || residual: 0.10227694027146161
+iteration: 12 || residual: 0.0935433720825501
+iteration: 13 || residual: 0.08627316888259602
+iteration: 14 || residual: 0.08013025472680728
+iteration: 15 || residual: 0.07487308788054763
+iteration: 16 || residual: 0.07032372940836111
+iteration: 17 || residual: 0.06634829631725017
+iteration: 18 || residual: 0.06284420148250369
+iteration: 19 || residual: 0.059731585261188956
+iteration: 20 || residual: 0.05694741730606961
+iteration: 21 || residual: 0.05444134632187755
+iteration: 22 || residual: 0.05217272203945106
+iteration: 23 || residual: 0.050108420477051274
+iteration: 24 || residual: 0.04822123046693702
+iteration: 25 || residual: 0.04648863929108394
+iteration: 26 || residual: 0.044891906678991456
+iteration: 27 || residual: 0.04341535020430469
+iteration: 28 || residual: 0.042045787730703985
+iteration: 29 || residual: 0.04077209795959697
+iteration: 30 || residual: 0.03958487078845775
+iteration: 31 || residual: 0.03847612666411329
+iteration: 32 || residual: 0.037439089437449787
+iteration: 33 || residual: 0.03646800105552851
+iteration: 34 || residual: 0.03555796921957219
+iteration: 35 || residual: 0.03470484119476944
+iteration: 36 || residual: 0.03390509848872028
+iteration: 37 || residual: 0.03315576826941757
+iteration: 38 || residual: 0.0324543482689916
+iteration: 39 || residual: 0.03179874259435716
+iteration: 40 || residual: 0.031187206390311258
+iteration: 41 || residual: 0.030618297713475507
+iteration: 42 || residual: 0.03009083530707912
+iteration: 43 || residual: 0.029603861234083477
+iteration: 44 || residual: 0.029156607549022804
+iteration: 45 || residual: 0.028748466373099663
+iteration: 46 || residual: 0.028378962896078153
+iteration: 47 || residual: 0.028047730961654867
+iteration: 48 || residual: 0.02775449100808156
+iteration: 49 || residual: 0.02749903023118547
+iteration: 50 || residual: 0.02728118491711724
+iteration: 51 || residual: 0.02710082495054884
+iteration: 52 || residual: 0.026957840549656074
+iteration: 53 || residual: 0.026852131302497955
+iteration: 54 || residual: 0.026783597589361673
+iteration: 55 || residual: 0.026752134465899198
+iteration: 56 || residual: 0.02675762806343593
+iteration: 57 || residual: 0.026799954529910776
+iteration: 58 || residual: 0.026878981499771384
+iteration: 59 || residual: 0.026994572042892354
+iteration: 60 || residual: 0.027146591008090717
+iteration: 61 || residual: 0.027334913650225532
+iteration: 62 || residual: 0.02755943641470504
+iteration: 63 || residual: 0.02782008975095114
+iteration: 64 || residual: 0.028116852840382595
+iteration: 65 || residual: 0.028449770154674547
+iteration: 66 || residual: 0.02881896980374194
+iteration: 67 || residual: 0.029224683695955236
+iteration: 68 || residual: 0.029667269604383217
+iteration: 69 || residual: 0.030147235323964867
+iteration: 70 || residual: 0.030665265203957463
+iteration: 71 || residual: 0.03122224945784687
+iteration: 72 || residual: 0.03181931678522197
+iteration: 73 || residual: 0.03245787099496391
+iteration: 74 || residual: 0.033139632500040955
+iteration: 75 || residual: 0.03386668577102853
+iteration: 76 || residual: 0.0346415340992772
+iteration: 77 || residual: 0.035467163347784623
+iteration: 78 || residual: 0.03634711677973025
+iteration: 79 || residual: 0.03728558357904631
+iteration: 80 || residual: 0.038287504356127794
+iteration: 81 || residual: 0.03935869781626729
+iteration: 82 || residual: 0.040506013934794964
+iteration: 83 || residual: 0.04173752053718295
+iteration: 84 || residual: 0.04306273227140684
+iteration: 85 || residual: 0.04449289379990527
+iteration: 86 || residual: 0.04604133293935677
+iteration: 87 || residual: 0.047723904898328014
+iteration: 88 || residual: 0.049559556389536685
+iteration: 89 || residual: 0.05157104926839211
+iteration: 90 || residual: 0.05378589907757562
+iteration: 91 || residual: 0.05623760697967396
+iteration: 92 || residual: 0.05896729807485994
+iteration: 93 || residual: 0.06202593162216373
+iteration: 94 || residual: 0.06547733023551426
+iteration: 95 || residual: 0.06940240459712425
+iteration: 96 || residual: 0.07390516086830065
+iteration: 97 || residual: 0.07912143009129834
+iteration: 98 || residual: 0.08523186551476725
+iteration: 99 || residual: 0.09248183474760756
+iteration: 100 || residual: 0.10121283391533842
+iteration: 101 || residual: 0.11191391237089388
+iteration: 102 || residual: 0.1253094117032854
+iteration: 103 || residual: 0.14251598726808126
+iteration: 104 || residual: 0.16533942996311884
+iteration: 105 || residual: 0.19687080603278612
+iteration: 106 || residual: 0.24275583824084906
+iteration: 107 || residual: 0.31394361046090224
+iteration: 108 || residual: 0.4311099871530466
+iteration: 109 || residual: 0.6077514944731439
+iteration: 110 || residual: 0.6825857534720645
+iteration: 111 || residual: 0.5197883511888575
+iteration: 112 || residual: 0.3685885829381567
+iteration: 113 || residual: 0.2763116951753851
+iteration: 114 || residual: 0.21888371602876597
+iteration: 115 || residual: 0.18068271391954516
+iteration: 116 || residual: 0.1537343480481301
+iteration: 117 || residual: 0.13382061081365138
+iteration: 118 || residual: 0.11855906492775302
+iteration: 119 || residual: 0.10651862691540051
+iteration: 120 || residual: 0.09679334744236082
+iteration: 121 || residual: 0.088783951051827
+iteration: 122 || residual: 0.08207915266716177
+iteration: 123 || residual: 0.07638777618254573
+iteration: 124 || residual: 0.07149815596238512
+iteration: 125 || residual: 0.06725289735289448
+iteration: 126 || residual: 0.06353264824359116
+iteration: 127 || residual: 0.06024535242942334
+iteration: 128 || residual: 0.057318945900758415
+iteration: 129 || residual: 0.05469627746164214
+iteration: 130 || residual: 0.05233150298053335
+iteration: 131 || residual: 0.0501874781548469
+iteration: 132 || residual: 0.04823384170022007
+iteration: 133 || residual: 0.04644558476085552
+iteration: 134 || residual: 0.044801968481104314
+iteration: 135 || residual: 0.04328569469094171
+iteration: 136 || residual: 0.041882263179473876
+iteration: 137 || residual: 0.04057946827627225
+iteration: 138 || residual: 0.03936700066315539
+iteration: 139 || residual: 0.03823612953099072
+iteration: 140 || residual: 0.03717944668551835
+iteration: 141 || residual: 0.036190658847578425
+iteration: 142 || residual: 0.03526441775091383
+iteration: 143 || residual: 0.03439618010051327
+iteration: 144 || residual: 0.03358209127297122
+iteration: 145 || residual: 0.032818888000328325
+iteration: 146 || residual: 0.032103816307175244
+iteration: 147 || residual: 0.03143456175399007
+iteration: 148 || residual: 0.03080918964609504
+iteration: 149 || residual: 0.03022609334055641
+iteration: 150 || residual: 0.0296839491575287
+iteration: 151 || residual: 0.029181676704297443
+iteration: 152 || residual: 0.028718403665658504
+iteration: 153 || residual: 0.028293434318203393
+iteration: 154 || residual: 0.02790622119765349
+iteration: 155 || residual: 0.027556339494730336
+iteration: 156 || residual: 0.027243463879083545
+iteration: 157 || residual: 0.02696734755769164
+iteration: 158 || residual: 0.026727803462457154
+iteration: 159 || residual: 0.02652468753401101
+iteration: 160 || residual: 0.02635788412302626
+iteration: 161 || residual: 0.02622729356819308
+iteration: 162 || residual: 0.026132822029862363
+iteration: 163 || residual: 0.026074373662609923
+iteration: 164 || residual: 0.02605184519806512
+iteration: 165 || residual: 0.02606512298695619
+iteration: 166 || residual: 0.026114082516330284
+iteration: 167 || residual: 0.02619859038143104
+iteration: 168 || residual: 0.026318508654799448
+iteration: 169 || residual: 0.02647370156190332
+iteration: 170 || residual: 0.026664044349104642
+iteration: 171 || residual: 0.026889434215631395
+iteration: 172 || residual: 0.02714980318391113
+iteration: 173 || residual: 0.027445132796839387
+iteration: 174 || residual: 0.02777547056407873
+iteration: 175 || residual: 0.02814094812451384
+iteration: 176 || residual: 0.02854180115409231
+iteration: 177 || residual: 0.028978391121737845
+iteration: 178 || residual: 0.02945122908356903
+iteration: 179 || residual: 0.029961001805260352
+iteration: 180 || residual: 0.03050860061702844
+iteration: 181 || residual: 0.031095153534858644
+iteration: 182 || residual: 0.03172206133389934
+iteration: 183 || residual: 0.03239103843590583
+iteration: 184 || residual: 0.0331041596845962
+iteration: 185 || residual: 0.03386391434203904
+iteration: 186 || residual: 0.034673268957698816
+iteration: 187 || residual: 0.035535741165659024
+iteration: 188 || residual: 0.03645548697788982
+iteration: 189 || residual: 0.03743740480457624
+iteration: 190 || residual: 0.038487260294428775
+iteration: 191 || residual: 0.03961183722452564
+iteration: 192 || residual: 0.04081912117861206
+iteration: 193 || residual: 0.04211852477768769
+iteration: 194 || residual: 0.04352116597146044
+iteration: 195 || residual: 0.04504021465583594
+iteration: 196 || residual: 0.04669132808364732
+iteration: 197 || residual: 0.04849320281807596
+iteration: 198 || residual: 0.05046828130846227
+iteration: 199 || residual: 0.052643666010749206
+iteration: 200 || residual: 0.05505231561573747
+iteration: 201 || residual: 0.0577346299888727
+iteration: 202 || residual: 0.06074057865498664
+iteration: 203 || residual: 0.06413260157478204
+iteration: 204 || residual: 0.06798962641912198
+iteration: 205 || residual: 0.07241273066130008
+iteration: 206 || residual: 0.07753327688597406
+iteration: 207 || residual: 0.08352485016582616
+iteration: 208 || residual: 0.09062118082732391
+iteration: 209 || residual: 0.09914372835069331
+iteration: 210 || residual: 0.10954525867377449
+iteration: 211 || residual: 0.12248051404065378
+iteration: 212 || residual: 0.13892344124012893
+iteration: 213 || residual: 0.16036346558189002
+iteration: 214 || residual: 0.1891230117093837
+iteration: 215 || residual: 0.22877403313856434
+iteration: 216 || residual: 0.2840562059507824
+iteration: 217 || residual: 0.35652504545037117
+iteration: 218 || residual: 0.4240362813507179
+iteration: 219 || residual: 0.426649927952232
+iteration: 220 || residual: 0.36122418507620574
+iteration: 221 || residual: 0.2880023481391495
+iteration: 222 || residual: 0.231629565493867
+iteration: 223 || residual: 0.19116349309533834
+iteration: 224 || residual: 0.16184848892995304
+iteration: 225 || residual: 0.14002699298363216
+iteration: 226 || residual: 0.12331323501100623
+iteration: 227 || residual: 0.11017804030681634
+iteration: 228 || residual: 0.09962307133895937
+iteration: 229 || residual: 0.09097841901263794
+iteration: 230 || residual: 0.0837816680423429
+iteration: 231 || residual: 0.07770507086120723
+iteration: 232 || residual: 0.07251070795625278
+iteration: 233 || residual: 0.06802214952409799
+iteration: 234 || residual: 0.06410607038493528
+iteration: 235 || residual: 0.06066002195248477
+iteration: 236 || residual: 0.057604109653415496
+iteration: 237 || residual: 0.05487520738336458
+iteration: 238 || residual: 0.05242285713339621
+iteration: 239 || residual: 0.05020631121003263
+iteration: 240 || residual: 0.04819236397895558
+iteration: 241 || residual: 0.04635373875435114
+iteration: 242 || residual: 0.04466787134445208
+iteration: 243 || residual: 0.043115981232005836
+iteration: 244 || residual: 0.04168235419547908
+iteration: 245 || residual: 0.04035378233142107
+iteration: 246 || residual: 0.039119122618137867
+iteration: 247 || residual: 0.037968945720519696
+iteration: 248 || residual: 0.03689525417270397
+iteration: 249 || residual: 0.03589125438661291
+iteration: 250 || residual: 0.0349511707670154
+iteration: 251 || residual: 0.03407009301305776
+iteration: 252 || residual: 0.03324384975240789
+iteration: 253 || residual: 0.03246890319283847
+iteration: 254 || residual: 0.031742260635921116
+iteration: 255 || residual: 0.031061399578228465
+iteration: 256 || residual: 0.030424203803286892
+iteration: 257 || residual: 0.029828908393061203
+iteration: 258 || residual: 0.029274052001695375
+iteration: 259 || residual: 0.02875843506526404
+iteration: 260 || residual: 0.02828108288665736
+iteration: 261 || residual: 0.027841212755800634
+iteration: 262 || residual: 0.02743820444912505
+iteration: 263 || residual: 0.02707157360683813
+iteration: 264 || residual: 0.026740947620079634
+iteration: 265 || residual: 0.026446043774601812
+iteration: 266 || residual: 0.02618664949348101
+iteration: 267 || residual: 0.02596260460318185
+iteration: 268 || residual: 0.025773785611382983
+iteration: 269 || residual: 0.025620092033100342
+iteration: 270 || residual: 0.02550143483363881
+iteration: 271 || residual: 0.02541772707115969
+iteration: 272 || residual: 0.02536887682175031
+iteration: 273 || residual: 0.02535478245444711
+iteration: 274 || residual: 0.025375330298530428
+iteration: 275 || residual: 0.02543039471110907
+iteration: 276 || residual: 0.025519840516992926
+iteration: 277 || residual: 0.025643527755030517
+iteration: 278 || residual: 0.025801318635571786
+iteration: 279 || residual: 0.025993086590120826
+iteration: 280 || residual: 0.02621872728440512
+iteration: 281 || residual: 0.02647817146924067
+iteration: 282 || residual: 0.026771399561741734
+iteration: 283 || residual: 0.027098457881838577
+iteration: 284 || residual: 0.027459476517221068
+iteration: 285 || residual: 0.027854688849302152
+iteration: 286 || residual: 0.028284452846694532
+iteration: 287 || residual: 0.028749274316511288
+iteration: 288 || residual: 0.02924983240175242
+iteration: 289 || residual: 0.02978700772115494
+iteration: 290 || residual: 0.030361913674832194
+iteration: 291 || residual: 0.03097593158102792
+iteration: 292 || residual: 0.031630750480351355
+iteration: 293 || residual: 0.032328412643822156
+iteration: 294 || residual: 0.03307136606739902
+iteration: 295 || residual: 0.03386252553862802
+iteration: 296 || residual: 0.034705344240749156
+iteration: 297 || residual: 0.03560389834447512
+iteration: 298 || residual: 0.036562987657811116
+iteration: 299 || residual: 0.0375882562105314
+iteration: 300 || residual: 0.03868633770714455
+iteration: 301 || residual: 0.03986503217657689
+iteration: 302 || residual: 0.04113352200787334
+iteration: 303 || residual: 0.042502638063957626
+iteration: 304 || residual: 0.04398518996345697
+iteration: 305 || residual: 0.04559637927948348
+iteration: 306 || residual: 0.04735432085607224
+iteration: 307 || residual: 0.04928070647435771
+iteration: 308 || residual: 0.051401657882650484
+iteration: 309 || residual: 0.05374883450572024
+iteration: 310 || residual: 0.056360887663913575
+iteration: 311 || residual: 0.05928539201373877
+iteration: 312 || residual: 0.0625814426158985
+iteration: 313 || residual: 0.06632319260895246
+iteration: 314 || residual: 0.07060473760195962
+iteration: 315 || residual: 0.07554695270815766
+iteration: 316 || residual: 0.08130719217343879
+iteration: 317 || residual: 0.08809321662421744
+iteration: 318 || residual: 0.09618335998380576
+iteration: 319 || residual: 0.10595573770525378
+iteration: 320 || residual: 0.11792976144516872
+iteration: 321 || residual: 0.1328212805754996
+iteration: 322 || residual: 0.15160042544234895
+iteration: 323 || residual: 0.17549089748638588
+iteration: 324 || residual: 0.20567293822348484
+iteration: 325 || residual: 0.24195147476449033
+iteration: 326 || residual: 0.27900988513414254
+iteration: 327 || residual: 0.3020273619718143
+iteration: 328 || residual: 0.2955738535819966
+iteration: 329 || residual: 0.2644985260444188
+iteration: 330 || residual: 0.2265471067133871
+iteration: 331 || residual: 0.19252338789551418
+iteration: 332 || residual: 0.16500879640842706
+iteration: 333 || residual: 0.14335351017348638
+iteration: 334 || residual: 0.12628350685286321
+iteration: 335 || residual: 0.11266897629736213
+iteration: 336 || residual: 0.10164967657243076
+iteration: 337 || residual: 0.09259763334303797
+iteration: 338 || residual: 0.08505731532255538
+iteration: 339 || residual: 0.07869584474915904
+iteration: 340 || residual: 0.07326688397041033
+iteration: 341 || residual: 0.06858550874561958
+iteration: 342 || residual: 0.0645108827301023
+iteration: 343 || residual: 0.06093425845791105
+iteration: 344 || residual: 0.05777058140390896
+iteration: 345 || residual: 0.05495253964112911
+iteration: 346 || residual: 0.05242628883714375
+iteration: 347 || residual: 0.05014833862659183
+iteration: 348 || residual: 0.048083254533949724
+iteration: 349 || residual: 0.04620194016726359
+iteration: 350 || residual: 0.04448033764647573
+iteration: 351 || residual: 0.04289843325862831
+iteration: 352 || residual: 0.04143948853346126
+iteration: 353 || residual: 0.040089439688021325
+iteration: 354 || residual: 0.03883642417274502
+iteration: 355 || residual: 0.03767040412851768
+iteration: 356 || residual: 0.036582864428771456
+iteration: 357 || residual: 0.035566568623490724
+iteration: 358 || residual: 0.034615360195580286
+iteration: 359 || residual: 0.03372399953804421
+iteration: 360 || residual: 0.03288802927812073
+iteration: 361 || residual: 0.03210366223015255
+iteration: 362 || residual: 0.03136768750643188
+iteration: 363 || residual: 0.030677391263323594
+iteration: 364 || residual: 0.030030489288613533
+iteration: 365 || residual: 0.029425069199994252
+iteration: 366 || residual: 0.02885954046783828
+iteration: 367 || residual: 0.028332590826072698
+iteration: 368 || residual: 0.027843147918873122
+iteration: 369 || residual: 0.02739034526154761
+iteration: 370 || residual: 0.02697349178649025
+iteration: 371 || residual: 0.026592044407405882
+iteration: 372 || residual: 0.026245583173451867
+iteration: 373 || residual: 0.025933788704454806
+iteration: 374 || residual: 0.02565642170085124
+iteration: 375 || residual: 0.025413304409549267
+iteration: 376 || residual: 0.025204303999046277
+iteration: 377 || residual: 0.02502931785445446
+iteration: 378 || residual: 0.024888260843964553
+iteration: 379 || residual: 0.02478105463482605
+iteration: 380 || residual: 0.02470761914501425
+iteration: 381 || residual: 0.024667866213222967
+iteration: 382 || residual: 0.024661695550537942
+iteration: 383 || residual: 0.024688993009492764
+iteration: 384 || residual: 0.024749631171596193
+iteration: 385 || residual: 0.02484347221621465
+iteration: 386 || residual: 0.024970372999141347
+iteration: 387 || residual: 0.02513019223920274
+iteration: 388 || residual: 0.02532279969018479
+iteration: 389 || residual: 0.025548087168312996
+iteration: 390 || residual: 0.025805981308978997
+iteration: 391 || residual: 0.026096457947945562
+iteration: 392 || residual: 0.026419558053661227
+iteration: 393 || residual: 0.026775405186120142
+iteration: 394 || residual: 0.02716422451645632
+iteration: 395 || residual: 0.0275863635112234
+iteration: 396 || residual: 0.02804231446859782
+iteration: 397 || residual: 0.028532739183331546
+iteration: 398 || residual: 0.029058496123301397
+iteration: 399 || residual: 0.029620670615806307
+iteration: 400 || residual: 0.03022060867813275
+iteration: 401 || residual: 0.030859955282038446
+iteration: 402 || residual: 0.0315406980301817
+iteration: 403 || residual: 0.03226521744612006
+iteration: 404 || residual: 0.033036345358266085
+iteration: 405 || residual: 0.033857433203183004
+iteration: 406 || residual: 0.0347324325109401
+iteration: 407 || residual: 0.035665990392462384
+iteration: 408 || residual: 0.036663563566455164
+iteration: 409 || residual: 0.03773155539546433
+iteration: 410 || residual: 0.038877481618645376
+iteration: 411 || residual: 0.04011017207619389
+iteration: 412 || residual: 0.04144001785176525
+iteration: 413 || residual: 0.04287927611099533
+iteration: 414 || residual: 0.04444244875505593
+iteration: 415 || residual: 0.04614675621778057
+iteration: 416 || residual: 0.048012734851154294
+iteration: 417 || residual: 0.050064996122094536
+iteration: 418 || residual: 0.05233319935319654
+iteration: 419 || residual: 0.05485330846498463
+iteration: 420 || residual: 0.05766922913873193
+iteration: 421 || residual: 0.06083495863480048
+iteration: 422 || residual: 0.06441742918304134
+iteration: 423 || residual: 0.06850028983890243
+iteration: 424 || residual: 0.07318894956563884
+iteration: 425 || residual: 0.07861728151874996
+iteration: 426 || residual: 0.08495641187994461
+iteration: 427 || residual: 0.09242582606071212
+iteration: 428 || residual: 0.10130617358168403
+iteration: 429 || residual: 0.11195043944952367
+iteration: 430 || residual: 0.12478246602799282
+iteration: 431 || residual: 0.14025165538647186
+iteration: 432 || residual: 0.15866507416880973
+iteration: 433 || residual: 0.17973068434310796
+iteration: 434 || residual: 0.20160382048309003
+iteration: 435 || residual: 0.21973465332498276
+iteration: 436 || residual: 0.22757811756087312
+iteration: 437 || residual: 0.2213734049729211
+iteration: 438 || residual: 0.2041430474891231
+iteration: 439 || residual: 0.18241754475574692
+iteration: 440 || residual: 0.1611020647935853
+iteration: 441 || residual: 0.14231876388908932
+iteration: 442 || residual: 0.12648742346304206
+iteration: 443 || residual: 0.11334168385011194
+iteration: 444 || residual: 0.10243694085814103
+iteration: 445 || residual: 0.09334255598082113
+iteration: 446 || residual: 0.08569654004882112
+iteration: 447 || residual: 0.07921009869182416
+iteration: 448 || residual: 0.07365717327718282
+iteration: 449 || residual: 0.06886156755861517
+iteration: 450 || residual: 0.06468556978193522
+iteration: 451 || residual: 0.06102088349535372
+iteration: 452 || residual: 0.05778168890349943
+iteration: 453 || residual: 0.054899418178955876
+iteration: 454 || residual: 0.052318837279292006
+iteration: 455 || residual: 0.04999510151090817
+iteration: 456 || residual: 0.04789153106147116
+iteration: 457 || residual: 0.04597791859756141
+iteration: 458 || residual: 0.044229231470558406
+iteration: 459 || residual: 0.042624608292330564
+iteration: 460 || residual: 0.04114657665625984
+iteration: 461 || residual: 0.03978043826741568
+iteration: 462 || residual: 0.03851378180543931
+iteration: 463 || residual: 0.0373360940146838
+iteration: 464 || residual: 0.036238446915283974
+iteration: 465 || residual: 0.03521324444016618
+iteration: 466 || residual: 0.03425401579250187
+iteration: 467 || residual: 0.033355245775038865
+iteration: 468 || residual: 0.03251223455548105
+iteration: 469 || residual: 0.03172098099684485
+iteration: 470 || residual: 0.030978084944111965
+iteration: 471 || residual: 0.03028066482542367
+iteration: 472 || residual: 0.029626287669301497
+iteration: 473 || residual: 0.029012909218455233
+iteration: 474 || residual: 0.028438822274947942
+iteration: 475 || residual: 0.027902611771836783
+iteration: 476 || residual: 0.02740311535665717
+iteration: 477 || residual: 0.026939388507410622
+iteration: 478 || residual: 0.026510673399532128
+iteration: 479 || residual: 0.026116370904334885
+iteration: 480 || residual: 0.025756015243051697
+iteration: 481 || residual: 0.02542925094004009
+iteration: 482 || residual: 0.02513581182556588
+iteration: 483 || residual: 0.024875501928817944
+iteration: 484 || residual: 0.02464817818070783
+iteration: 485 || residual: 0.02445373490775474
+iteration: 486 || residual: 0.024292090150215297
+iteration: 487 || residual: 0.024163173870066626
+iteration: 488 || residual: 0.024066918135333158
+iteration: 489 || residual: 0.024003249371307767
+iteration: 490 || residual: 0.023972082758869466
+iteration: 491 || residual: 0.023973318840636894
+iteration: 492 || residual: 0.0240068423629908
+iteration: 493 || residual: 0.024072523347953692
+iteration: 494 || residual: 0.02417022035009967
+iteration: 495 || residual: 0.024299785820021694
+iteration: 496 || residual: 0.024461073466669522
+iteration: 497 || residual: 0.024653947492886116
+iteration: 498 || residual: 0.02487829357165936
+iteration: 499 || residual: 0.025134031437108992
+iteration: 500 || residual: 0.02542112898509335
+iteration: 501 || residual: 0.025739617811748296
+iteration: 502 || residual: 0.026089610164301783
+iteration: 503 || residual: 0.0264713173365876
+iteration: 504 || residual: 0.026885069608067684
+iteration: 505 || residual: 0.027331337902823213
+iteration: 506 || residual: 0.02781075743065812
+iteration: 507 || residual: 0.02832415366814649
+iteration: 508 || residual: 0.028872571145732936
+iteration: 509 || residual: 0.0294573056288769
+iteration: 510 || residual: 0.03007994042303294
+iteration: 511 || residual: 0.030742387698827738
+iteration: 512 || residual: 0.03144693593360931
+iteration: 513 || residual: 0.0321963048092451
+iteration: 514 || residual: 0.03299370920684805
+iteration: 515 || residual: 0.033842934314904004
+iteration: 516 || residual: 0.034748424342489606
+iteration: 517 || residual: 0.03571538793068885
+iteration: 518 || residual: 0.03674992412833024
+iteration: 519 || residual: 0.03785917378876734
+iteration: 520 || residual: 0.03905150252900813
+iteration: 521 || residual: 0.040336723055796955
+iteration: 522 || residual: 0.041726366833890506
+iteration: 523 || residual: 0.04323401790075887
+iteration: 524 || residual: 0.04487572532795871
+iteration: 525 || residual: 0.04667051564427818
+iteration: 526 || residual: 0.048641032767664516
+iteration: 527 || residual: 0.050814340957236866
+iteration: 528 || residual: 0.0532229362164511
+iteration: 529 || residual: 0.055906023347955795
+iteration: 530 || residual: 0.05891112844029277
+iteration: 531 || residual: 0.06229612665057498
+iteration: 532 || residual: 0.06613176415096078
+iteration: 533 || residual: 0.07050472050784634
+iteration: 534 || residual: 0.0755211464603943
+iteration: 535 || residual: 0.08131031650657553
+iteration: 536 || residual: 0.08802732415496815
+iteration: 537 || residual: 0.09585212598368677
+iteration: 538 || residual: 0.10497871324792497
+iteration: 539 || residual: 0.11558100127961615
+iteration: 540 || residual: 0.12772915296401374
+iteration: 541 || residual: 0.14121385168997808
+iteration: 542 || residual: 0.15524164115071123
+iteration: 543 || residual: 0.168077202653706
+iteration: 544 || residual: 0.17703585149674977
+iteration: 545 || residual: 0.17947545048269356
+iteration: 546 || residual: 0.17455253729448617
+iteration: 547 || residual: 0.16391056232282727
+iteration: 548 || residual: 0.15039188336307832
+iteration: 549 || residual: 0.13640203842584475
+iteration: 550 || residual: 0.12331778873736261
+iteration: 551 || residual: 0.11168821680185649
+iteration: 552 || residual: 0.10159827920297536
+iteration: 553 || residual: 0.09292785256045322
+iteration: 554 || residual: 0.08549003176985583
+iteration: 555 || residual: 0.07909359771465792
+iteration: 556 || residual: 0.07356686887520807
+iteration: 557 || residual: 0.0687640553927337
+iteration: 558 || residual: 0.06456447876062052
+iteration: 559 || residual: 0.06086934792438351
+iteration: 560 || residual: 0.05759807238271088
+iteration: 561 || residual: 0.054684867636436506
+iteration: 562 || residual: 0.05207587964250684
+iteration: 563 || residual: 0.04972684102441615
+iteration: 564 || residual: 0.04760119576784041
+iteration: 565 || residual: 0.04566861100988448
+iteration: 566 || residual: 0.043903798878158234
+iteration: 567 || residual: 0.04228558289288305
+iteration: 568 || residual: 0.04079615595754336
+iteration: 569 || residual: 0.039420488144155184
+iteration: 570 || residual: 0.03814585170812427
+iteration: 571 || residual: 0.03696143810019481
+iteration: 572 || residual: 0.03585804744985243
+iteration: 573 || residual: 0.03482783539149512
+iteration: 574 || residual: 0.03386410547702076
+iteration: 575 || residual: 0.03296113800136305
+iteration: 576 || residual: 0.03211404804824177
+iteration: 577 || residual: 0.03131866708726546
+iteration: 578 || residual: 0.030571443628554847
+iteration: 579 || residual: 0.029869359353471608
+iteration: 580 || residual: 0.029209857850778488
+iteration: 581 || residual: 0.028590783645169385
+iteration: 582 || residual: 0.028010329646689033
+iteration: 583 || residual: 0.02746699150116243
+iteration: 584 || residual: 0.026959527606545686
+iteration: 585 || residual: 0.026486923790825345
+iteration: 586 || residual: 0.026048361840612825
+iteration: 587 || residual: 0.02564319123111609
+iteration: 588 || residual: 0.025270903546962962
+iteration: 589 || residual: 0.024931109203262643
+iteration: 590 || residual: 0.024623516181852486
+iteration: 591 || residual: 0.024347910589610305
+iteration: 592 || residual: 0.024104138925881105
+iteration: 593 || residual: 0.023892092013468876
+iteration: 594 || residual: 0.023711690604101866
+iteration: 595 || residual: 0.023562872709822373
+iteration: 596 || residual: 0.023445582741068508
+iteration: 597 || residual: 0.023359762544841362
+iteration: 598 || residual: 0.023305344436017564
+iteration: 599 || residual: 0.02328224630135385
+iteration: 600 || residual: 0.02329036883135888
+iteration: 601 || residual: 0.02332959490217948
+iteration: 602 || residual: 0.023399791093303476
+iteration: 603 || residual: 0.023500811289522455
+iteration: 604 || residual: 0.023632502280777658
+iteration: 605 || residual: 0.023794711247827754
+iteration: 606 || residual: 0.023987295003716783
+iteration: 607 || residual: 0.024210130856369236
+iteration: 608 || residual: 0.02446312896579877
+iteration: 609 || residual: 0.024746246089334196
+iteration: 610 || residual: 0.025059500643114428
+iteration: 611 || residual: 0.025402989051433327
+iteration: 612 || residual: 0.02577690341130643
+iteration: 613 || residual: 0.02618155056216691
+iteration: 614 || residual: 0.0266173727225808
+iteration: 615 || residual: 0.02708496993444244
+iteration: 616 || residual: 0.027585124642145117
+iteration: 617 || residual: 0.028118828830425668
+iteration: 618 || residual: 0.028687314252969085
+iteration: 619 || residual: 0.02929208640703114
+iteration: 620 || residual: 0.029934963052639565
+iteration: 621 || residual: 0.030618118244623134
+iteration: 622 || residual: 0.031344133049726296
+iteration: 623 || residual: 0.03211605436855715
+iteration: 624 || residual: 0.03293746358745218
+iteration: 625 || residual: 0.03381255716265075
+iteration: 626 || residual: 0.0347462417088631
+iteration: 627 || residual: 0.0357442467520786
+iteration: 628 || residual: 0.036813259039910215
+iteration: 629 || residual: 0.03796108322166961
+iteration: 630 || residual: 0.039196834854322384
+iteration: 631 || residual: 0.04053117310871168
+iteration: 632 || residual: 0.04197658228654132
+iteration: 633 || residual: 0.0435477133421528
+iteration: 634 || residual: 0.045261799019747834
+iteration: 635 || residual: 0.04713915884114781
+iteration: 636 || residual: 0.04920381266089564
+iteration: 637 || residual: 0.051484223018864274
+iteration: 638 || residual: 0.05401418529210385
+iteration: 639 || residual: 0.05683387703092864
+iteration: 640 || residual: 0.0599910565402087
+iteration: 641 || residual: 0.06354235128175033
+iteration: 642 || residual: 0.06755447087505283
+iteration: 643 || residual: 0.0721049633920508
+iteration: 644 || residual: 0.07728170654132181
+iteration: 645 || residual: 0.08317950825933622
+iteration: 646 || residual: 0.08989069785244823
+iteration: 647 || residual: 0.09748407141291135
+iteration: 648 || residual: 0.10596299109818498
+iteration: 649 || residual: 0.1151905863499257
+iteration: 650 || residual: 0.1247751702679638
+iteration: 651 || residual: 0.13394006633664926
+iteration: 652 || residual: 0.14147857676704287
+iteration: 653 || residual: 0.14597540142146684
+iteration: 654 || residual: 0.14637472303829885
+iteration: 655 || residual: 0.14257371801623148
+iteration: 656 || residual: 0.13548699718669321
+iteration: 657 || residual: 0.1265136772471726
+iteration: 658 || residual: 0.11692625469119175
+iteration: 659 || residual: 0.10758260864189732
+iteration: 660 || residual: 0.0989363591496423
+iteration: 661 || residual: 0.09116182937078546
+iteration: 662 || residual: 0.08427490560862123
+iteration: 663 || residual: 0.07821508123106302
+iteration: 664 || residual: 0.07289249277522432
+iteration: 665 || residual: 0.06821201230733903
+iteration: 666 || residual: 0.06408428562654145
+
+
+
+
+
+____________________________________________________________________________________
+frequencies: 1.0, 1.4, 1.8, 2.2, 2.6, 3.0, 3.4, 3.8, 4.2
+
+iterations: 4, 3, 6, 4, 10, 24, 65, 261, >666
+
+
+
+
+
+
+
+____________________________________________________________________________________
+
+below is the same 8th order method but with spacetol = 1e-1 and systemtol 1e-6
+
+
+(upper bound on) length of domain in wavelengths: 4.875916873847411
+Points per (shortest) wavelength: 5.106894772573147
+DoFs: 900
+WHI || || omega: 1.0 || number of elements: 5 by 3
+Number of timesteps for waveholtz: 3636 with a step size of 0.0017280487643508214
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.058515557786358356
+iteration: 3 || residual: 0.004358424701911666
+iteration: 4 || residual: 0.0005261986854880492
+iteration: 5 || residual: 5.149096213594586e-5
+iteration: 6 || residual: 3.687475827773715e-6
+iteration: 7 || residual: 3.525465869054578e-7
+gmres || || omega: 1.0 || number of elements: 5 by 3
+time step size for the wave solver: 0.0017280487643508214
+(upper bound on) length of domain in wavelengths: 5.363508561232152
+Points per (shortest) wavelength: 5.168101029704917
+DoFs: 1400
+WHI || || omega: 1.1 || number of elements: 7 by 4
+Number of timesteps for waveholtz: 4517 with a step size of 0.001264553164244085
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.02685921998243132
+iteration: 3 || residual: 0.0010053680842574372
+iteration: 4 || residual: 3.638045578024792e-5
+iteration: 5 || residual: 1.218455140759036e-6
+iteration: 6 || residual: 5.624417105615769e-8
+gmres || || omega: 1.1 || number of elements: 7 by 4
+time step size for the wave solver: 0.001264553164244085
+(upper bound on) length of domain in wavelengths: 5.851100248616892
+Points per (shortest) wavelength: 5.224618273634538
+DoFs: 1550
+WHI || || omega: 1.2000000000000002 || number of elements: 7 by 4
+Number of timesteps for waveholtz: 4141 with a step size of 0.0012644259251347472
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.07236763249332319
+iteration: 3 || residual: 0.01254835536457288
+iteration: 4 || residual: 0.001630724571619607
+iteration: 5 || residual: 0.00023731254208567555
+iteration: 6 || residual: 3.7267012546380155e-5
+iteration: 7 || residual: 4.335506750886104e-6
+iteration: 8 || residual: 4.3710858814711534e-8
+gmres || || omega: 1.2000000000000002 || number of elements: 7 by 4
+time step size for the wave solver: 0.0012644259251347472
+(upper bound on) length of domain in wavelengths: 6.338691936001632
+Points per (shortest) wavelength: 5.2771547320355525
+DoFs: 2176
+WHI || || omega: 1.2999999999999998 || number of elements: 9 by 5
+Number of timesteps for waveholtz: 4848 with a step size of 0.000996951210202397
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.07820248678565488
+iteration: 3 || residual: 0.009208546801855432
+iteration: 4 || residual: 0.0013693274851929213
+iteration: 5 || residual: 0.00018037602374459862
+iteration: 6 || residual: 2.121856849341169e-5
+iteration: 7 || residual: 3.0130350628940824e-6
+iteration: 8 || residual: 4.232072020681493e-7
+gmres || || omega: 1.2999999999999998 || number of elements: 9 by 5
+time step size for the wave solver: 0.000996951210202397
+(upper bound on) length of domain in wavelengths: 6.826283623386374
+Points per (shortest) wavelength: 5.326266759875484
+DoFs: 2368
+WHI || || omega: 1.4 || number of elements: 9 by 5
+Number of timesteps for waveholtz: 4502 with a step size of 0.0009968879398330245
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.0241305400416747
+iteration: 3 || residual: 0.0009009918668849983
+iteration: 4 || residual: 4.265923171804003e-5
+iteration: 5 || residual: 2.205316096889741e-6
+iteration: 6 || residual: 5.293366014846092e-8
+gmres || || omega: 1.4 || number of elements: 9 by 5
+time step size for the wave solver: 0.0009968879398330245
+(upper bound on) length of domain in wavelengths: 7.313875310771115
+Points per (shortest) wavelength: 5.372399706483905
+DoFs: 2560
+WHI || || omega: 1.5 || number of elements: 9 by 5
+Number of timesteps for waveholtz: 4201 with a step size of 0.000997093597902021
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.06070054579624799
+iteration: 3 || residual: 0.005031225688288827
+iteration: 4 || residual: 0.00040028951057009886
+iteration: 5 || residual: 3.44477905636701e-5
+iteration: 6 || residual: 3.1219411004595528e-6
+iteration: 7 || residual: 2.7202859057380135e-7
+gmres || || omega: 1.5 || number of elements: 9 by 5
+time step size for the wave solver: 0.000997093597902021
+(upper bound on) length of domain in wavelengths: 7.801466998155854
+Points per (shortest) wavelength: 5.415915841164117
+DoFs: 3053
+WHI || || omega: 1.6 || number of elements: 10 by 6
+Number of timesteps for waveholtz: 4545 with a step size of 0.0008640243821754107
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.11193409396605677
+iteration: 3 || residual: 0.021987312910119072
+iteration: 4 || residual: 0.00459605701793899
+iteration: 5 || residual: 0.0007381782038293382
+iteration: 6 || residual: 0.00013539271201803125
+iteration: 7 || residual: 2.8568549128717532e-5
+iteration: 8 || residual: 4.688107756930168e-6
+iteration: 9 || residual: 7.423602595095732e-7
+gmres || || omega: 1.6 || number of elements: 10 by 6
+time step size for the wave solver: 0.0008640243821754107
+(upper bound on) length of domain in wavelengths: 8.289058685540596
+Points per (shortest) wavelength: 5.457113976549905
+DoFs: 3266
+WHI || || omega: 1.7 || number of elements: 10 by 6
+Number of timesteps for waveholtz: 4277 with a step size of 0.0008641550987057429
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.13702129240050545
+iteration: 3 || residual: 0.038026403085717066
+iteration: 4 || residual: 0.007670161388379246
+iteration: 5 || residual: 0.0021813768674521132
+iteration: 6 || residual: 0.0004280516941454786
+iteration: 7 || residual: 0.0001211599154311577
+iteration: 8 || residual: 2.408383857494275e-5
+iteration: 9 || residual: 6.707781020609233e-6
+iteration: 10 || residual: 1.256921832632094e-6
+iteration: 11 || residual: 1.2184393341273513e-7
+gmres || || omega: 1.7 || number of elements: 10 by 6
+time step size for the wave solver: 0.0008641550987057429
+(upper bound on) length of domain in wavelengths: 8.776650372925337
+Points per (shortest) wavelength: 5.496243594152223
+DoFs: 3479
+WHI || || omega: 1.8 || number of elements: 10 by 6
+Number of timesteps for waveholtz: 4040 with a step size of 0.0008640243821754107
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.14164752472898062
+iteration: 3 || residual: 0.031844537850095805
+iteration: 4 || residual: 0.00870011874713782
+iteration: 5 || residual: 0.0017661427685851695
+iteration: 6 || residual: 0.00048431399225254136
+iteration: 7 || residual: 0.00011458373648807502
+iteration: 8 || residual: 2.4554993334537023e-5
+iteration: 9 || residual: 6.972618700153637e-6
+iteration: 10 || residual: 1.4601365614530093e-6
+iteration: 11 || residual: 2.551637354747356e-7
+gmres || || omega: 1.8 || number of elements: 10 by 6
+time step size for the wave solver: 0.0008640243821754107
+(upper bound on) length of domain in wavelengths: 9.264242060310078
+Points per (shortest) wavelength: 5.533515227958601
+DoFs: 4420
+WHI || || omega: 1.9 || number of elements: 12 by 7
+Number of timesteps for waveholtz: 4529 with a step size of 0.0007301699349431832
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.12437732651153555
+iteration: 3 || residual: 0.021606227122206938
+iteration: 4 || residual: 0.004627007980300362
+iteration: 5 || residual: 0.0010152512749176832
+iteration: 6 || residual: 0.0001948505770260773
+iteration: 7 || residual: 3.648256908905793e-5
+iteration: 8 || residual: 7.94940257339539e-6
+iteration: 9 || residual: 1.719415829171594e-6
+iteration: 10 || residual: 3.2535596645140014e-7
+gmres || || omega: 1.9 || number of elements: 12 by 7
+time step size for the wave solver: 0.0007301699349431832
+(upper bound on) length of domain in wavelengths: 9.751833747694821
+Points per (shortest) wavelength: 5.569108239398799
+DoFs: 4675
+WHI || || omega: 2.0 || number of elements: 12 by 7
+Number of timesteps for waveholtz: 4302 with a step size of 0.0007302632853532759
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.08970564670304455
+iteration: 3 || residual: 0.010432354508633942
+iteration: 4 || residual: 0.0013078261213363396
+iteration: 5 || residual: 0.00017346883303828896
+iteration: 6 || residual: 2.4315187859460494e-5
+iteration: 7 || residual: 3.44732412853317e-6
+iteration: 8 || residual: 4.724430908467625e-7
+gmres || || omega: 2.0 || number of elements: 12 by 7
+
+
+values of omega:
+[1.0, 1.1, 1.2000000000000002, 1.2999999999999998, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0]
+iterations for convergence: whi
+[7.0, 6.0, 8.0, 8.0, 6.0, 7.0, 9.0, 11.0, 11.0, 10.0, 8.0]
+iterations for convergence: gmres
+[5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 6.0, 6.0, 6.0, 6.0, 6.0]
+
+
+___________________________________________________________________________
+
+
+
+(upper bound on) length of domain in wavelengths: 10.239425435079559
+Points per (shortest) wavelength: 5.603176734928538
+DoFs: 5742
+WHI || || omega: 2.1 || number of elements: 14 by 8
+Number of timesteps for waveholtz: 4732 with a step size of 0.000632289307569495
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.03387147252412133
+iteration: 3 || residual: 0.0020809688923515914
+iteration: 4 || residual: 0.00017272723660324255
+iteration: 5 || residual: 1.603941192294633e-5
+iteration: 6 || residual: 1.8172164470329256e-6
+iteration: 7 || residual: 1.7151510903232138e-7
+gmres || || omega: 2.1 || number of elements: 14 by 8
+time step size for the wave solver: 0.000632289307569495
+(upper bound on) length of domain in wavelengths: 10.727017122464304
+Points per (shortest) wavelength: 5.635854136088493
+DoFs: 6039
+WHI || || omega: 2.2 || number of elements: 14 by 8
+Number of timesteps for waveholtz: 4517 with a step size of 0.0006322765821220425
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.04812209812749707
+iteration: 3 || residual: 0.0029164690463613922
+iteration: 4 || residual: 0.00018198755319914824
+iteration: 5 || residual: 1.1282494525298278e-5
+iteration: 6 || residual: 6.863114724623216e-7
+gmres || || omega: 2.2 || number of elements: 14 by 8
+time step size for the wave solver: 0.0006322765821220425
+(upper bound on) length of domain in wavelengths: 11.214608809849043
+Points per (shortest) wavelength: 5.667256755397639
+DoFs: 6336
+WHI || || omega: 2.3000000000000003 || number of elements: 14 by 8
+Number of timesteps for waveholtz: 4321 with a step size of 0.0006322193239467098
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.1255711084285875
+iteration: 3 || residual: 0.021846624540082703
+iteration: 4 || residual: 0.0035024868847443706
+iteration: 5 || residual: 0.0005862247377864431
+iteration: 6 || residual: 0.00010121930037850748
+iteration: 7 || residual: 1.7564148345900186e-5
+iteration: 8 || residual: 2.985512752409143e-6
+iteration: 9 || residual: 4.919341309981371e-7
+gmres || || omega: 2.3000000000000003 || number of elements: 14 by 8
+time step size for the wave solver: 0.0006322193239467098
+(upper bound on) length of domain in wavelengths: 11.702200497233784
+Points per (shortest) wavelength: 5.6974866276226726
+DoFs: 7102
+WHI || || omega: 2.4000000000000004 || number of elements: 15 by 9
+Number of timesteps for waveholtz: 4545 with a step size of 0.000576016254783607
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.2048238467578364
+iteration: 3 || residual: 0.058926954376567336
+iteration: 4 || residual: 0.016821176465152424
+iteration: 5 || residual: 0.004913285796299234
+iteration: 6 || residual: 0.001328964434745023
+iteration: 7 || residual: 0.0003328096404114788
+iteration: 8 || residual: 8.853721038005402e-5
+iteration: 9 || residual: 2.611691104193768e-5
+iteration: 10 || residual: 7.472896142862057e-6
+iteration: 11 || residual: 1.93765740999067e-6
+iteration: 12 || residual: 4.883217265409596e-7
+gmres || || omega: 2.4000000000000004 || number of elements: 15 by 9
+time step size for the wave solver: 0.000576016254783607
+(upper bound on) length of domain in wavelengths: 12.189792184618526
+Points per (shortest) wavelength: 5.726633775659469
+DoFs: 7420
+WHI || || omega: 2.5 || number of elements: 15 by 9
+Number of timesteps for waveholtz: 4363 with a step size of 0.0005760426593792882
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.2759194625351606
+iteration: 3 || residual: 0.11536426870860002
+iteration: 4 || residual: 0.049676132303137964
+iteration: 5 || residual: 0.01696231584160216
+iteration: 6 || residual: 0.00587969880658719
+iteration: 7 || residual: 0.00240151925172995
+iteration: 8 || residual: 0.0009180206850309804
+iteration: 9 || residual: 0.0003074997323615116
+iteration: 10 || residual: 0.0001166494296354429
+iteration: 11 || residual: 4.7586039771308495e-5
+iteration: 12 || residual: 1.6640898626399458e-5
+iteration: 13 || residual: 5.772070796872075e-6
+iteration: 14 || residual: 2.3705921731713104e-6
+iteration: 15 || residual: 8.962517961248094e-7
+gmres || || omega: 2.5 || number of elements: 15 by 9
+time step size for the wave solver: 0.0005760426593792882
+(upper bound on) length of domain in wavelengths: 12.677383872003265
+Points per (shortest) wavelength: 5.754778041755825
+DoFs: 7738
+WHI || || omega: 2.6 || number of elements: 15 by 9
+Number of timesteps for waveholtz: 4195 with a step size of 0.0005760690663958545
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.34272455466304264
+iteration: 3 || residual: 0.18612428358080552
+iteration: 4 || residual: 0.09943476841816601
+iteration: 5 || residual: 0.03908774534298603
+iteration: 6 || residual: 0.02032864407006121
+iteration: 7 || residual: 0.009198349107998216
+iteration: 8 || residual: 0.003966018338900564
+iteration: 9 || residual: 0.0020700383642567283
+iteration: 10 || residual: 0.0008888255882743025
+iteration: 11 || residual: 0.0004035450466159389
+iteration: 12 || residual: 0.00020740681359256475
+iteration: 13 || residual: 8.641648720003922e-5
+iteration: 14 || residual: 4.1281357963970145e-5
+iteration: 15 || residual: 2.0570925537857185e-5
+iteration: 16 || residual: 8.458969520718024e-6
+iteration: 17 || residual: 4.22732028542372e-6
+iteration: 18 || residual: 2.0223179108006596e-6
+iteration: 19 || residual: 8.35676409518081e-7
+gmres || || omega: 2.6 || number of elements: 15 by 9
+time step size for the wave solver: 0.0005760690663958545
+(upper bound on) length of domain in wavelengths: 13.164975559388006
+Points per (shortest) wavelength: 5.781990580767251
+DoFs: 9240
+WHI || || omega: 2.7 || number of elements: 17 by 10
+Number of timesteps for waveholtz: 4534 with a step size of 0.0005132566540197998
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.4174133045500881
+iteration: 3 || residual: 0.24776225570456378
+iteration: 4 || residual: 0.1537224064860763
+iteration: 5 || residual: 0.08479122719754423
+iteration: 6 || residual: 0.04398184996784217
+iteration: 7 || residual: 0.023500248483377503
+iteration: 8 || residual: 0.014049285505562096
+iteration: 9 || residual: 0.006893321069697494
+iteration: 10 || residual: 0.004092178025290759
+iteration: 11 || residual: 0.002147517853968888
+iteration: 12 || residual: 0.0011634493442217405
+iteration: 13 || residual: 0.0006699958651915145
+iteration: 14 || residual: 0.0003348928288685968
+iteration: 15 || residual: 0.00020135774749931957
+iteration: 16 || residual: 0.00010190944898213371
+iteration: 17 || residual: 5.775747073060482e-5
+iteration: 18 || residual: 3.1988151779266184e-5
+iteration: 19 || residual: 1.6406668075902296e-5
+iteration: 20 || residual: 9.803234220651806e-6
+iteration: 21 || residual: 4.8710133121908954e-6
+iteration: 22 || residual: 2.861717413079606e-6
+iteration: 23 || residual: 1.519356829268986e-6
+iteration: 24 || residual: 8.107997455902075e-7
+gmres || || omega: 2.7 || number of elements: 17 by 10
+time step size for the wave solver: 0.0005132566540197998
+(upper bound on) length of domain in wavelengths: 13.652567246772747
+Points per (shortest) wavelength: 5.808335087882142
+DoFs: 9600
+WHI || || omega: 2.8000000000000003 || number of elements: 17 by 10
+Number of timesteps for waveholtz: 4372 with a step size of 0.0005132650394702969
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.48913185506611445
+iteration: 3 || residual: 0.2934681173791484
+iteration: 4 || residual: 0.21393081472379724
+iteration: 5 || residual: 0.15425388881863053
+iteration: 6 || residual: 0.0779325402140038
+iteration: 7 || residual: 0.05327185830424061
+iteration: 8 || residual: 0.031251134027228275
+iteration: 9 || residual: 0.021297326635193438
+iteration: 10 || residual: 0.011921942309711662
+iteration: 11 || residual: 0.008034271504913669
+iteration: 12 || residual: 0.004700526167938034
+iteration: 13 || residual: 0.0030687719831022026
+iteration: 14 || residual: 0.0018369138999128217
+iteration: 15 || residual: 0.0011623374711999057
+iteration: 16 || residual: 0.0007225752973219181
+iteration: 17 || residual: 0.00044034544554694686
+iteration: 18 || residual: 0.00028325234228464594
+iteration: 19 || residual: 0.00016697628232138325
+iteration: 20 || residual: 0.00011077742839872424
+iteration: 21 || residual: 6.354975910710518e-5
+iteration: 22 || residual: 4.3105488828055435e-5
+iteration: 23 || residual: 2.4327197263459134e-5
+iteration: 24 || residual: 1.6681336394081067e-5
+iteration: 25 || residual: 9.377898075019885e-6
+iteration: 26 || residual: 6.416934717209064e-6
+iteration: 27 || residual: 3.6409006227105447e-6
+iteration: 28 || residual: 2.4544782101351034e-6
+iteration: 29 || residual: 1.4220291005496964e-6
+iteration: 30 || residual: 9.342792094384425e-7
+gmres || || omega: 2.8000000000000003 || number of elements: 17 by 10
+time step size for the wave solver: 0.0005132650394702969
+(upper bound on) length of domain in wavelengths: 14.140158934157487
+Points per (shortest) wavelength: 5.833868815722312
+DoFs: 11122
+WHI || || omega: 2.9 || number of elements: 19 by 11
+Number of timesteps for waveholtz: 4681 with a step size of 0.0004628531559849123
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.5557486127009792
+iteration: 3 || residual: 0.3210001480383192
+iteration: 4 || residual: 0.27056122470399
+iteration: 5 || residual: 0.22335185649062095
+iteration: 6 || residual: 0.14282463093002531
+iteration: 7 || residual: 0.08682008933063275
+iteration: 8 || residual: 0.06470121181616105
+iteration: 9 || residual: 0.0442521736862249
+iteration: 10 || residual: 0.03199352433490154
+iteration: 11 || residual: 0.02011623256680804
+iteration: 12 || residual: 0.014892660220025283
+iteration: 13 || residual: 0.009642252719995643
+iteration: 14 || residual: 0.007135833586240741
+iteration: 15 || residual: 0.004546597712010266
+iteration: 16 || residual: 0.0033494488482636586
+iteration: 17 || residual: 0.002167997144800367
+iteration: 18 || residual: 0.0015817343717415833
+iteration: 19 || residual: 0.0010341028794266947
+iteration: 20 || residual: 0.0007416732032847499
+iteration: 21 || residual: 0.000494683488405899
+iteration: 22 || residual: 0.0003479068876512911
+iteration: 23 || residual: 0.00023686452509624024
+iteration: 24 || residual: 0.00016286337986998558
+iteration: 25 || residual: 0.00011340836135012038
+iteration: 26 || residual: 7.628259141014654e-5
+iteration: 27 || residual: 5.4247135736695136e-5
+iteration: 28 || residual: 3.576200794392212e-5
+iteration: 29 || residual: 2.5897528098108422e-5
+iteration: 30 || residual: 1.6803796669691084e-5
+iteration: 31 || residual: 1.2332303551582062e-5
+iteration: 32 || residual: 7.919311078195922e-6
+iteration: 33 || residual: 5.854859885732005e-6
+iteration: 34 || residual: 3.74560998415477e-6
+iteration: 35 || residual: 2.7707978724153825e-6
+iteration: 36 || residual: 1.778117536635103e-6
+iteration: 37 || residual: 1.3071335046326903e-6
+iteration: 38 || residual: 8.469928068523654e-7
+gmres || || omega: 2.9 || number of elements: 19 by 11
+time step size for the wave solver: 0.0004628531559849123
+(upper bound on) length of domain in wavelengths: 14.62775062154223
+Points per (shortest) wavelength: 5.858643422889259
+DoFs: 11524
+WHI || || omega: 3.0 || number of elements: 19 by 11
+Number of timesteps for waveholtz: 4525 with a step size of 0.00046284974638523653
+iteration: 1 || residual: Inf
+iteration: 2 || residual: 0.6155297427732705
+iteration: 3 || residual: 0.34196501315613587
+iteration: 4 || residual: 0.30512208071155367
+iteration: 5 || residual: 0.280731121099777
+iteration: 6 || residual: 0.23168527507969086
+iteration: 7 || residual: 0.14040040718413216
+iteration: 8 || residual: 0.1012280150656449
+iteration: 9 || residual: 0.08135628753795794
+iteration: 10 || residual: 0.06154471235754768
+iteration: 11 || residual: 0.04810944585425466
+iteration: 12 || residual: 0.03220629610355411
+iteration: 13 || residual: 0.02551619227693668
+iteration: 14 || residual: 0.018619743458397432
+iteration: 15 || residual: 0.014174454457643504
+iteration: 16 || residual: 0.010707821280076277
+iteration: 17 || residual: 0.007542441733789989
+iteration: 18 || residual: 0.006023974761827712
+iteration: 19 || residual: 0.004207007915091323
+iteration: 20 || residual: 0.003333881302628098
+iteration: 21 || residual: 0.0023947887656339114
+iteration: 22 || residual: 0.0017921274692997192
+iteration: 23 || residual: 0.0013749578250181842
+iteration: 24 || residual: 0.000971904135228484
+iteration: 25 || residual: 0.0007763645428590691
+iteration: 26 || residual: 0.0005399932785881449
+iteration: 27 || residual: 0.00042582251540536326
+iteration: 28 || residual: 0.00030865070457320007
+iteration: 29 || residual: 0.00022961605311849417
+iteration: 30 || residual: 0.00017709934095500095
+iteration: 31 || residual: 0.00012450406989185072
+iteration: 32 || residual: 9.962437588191486e-5
+iteration: 33 || residual: 6.948026458602279e-5
+iteration: 34 || residual: 5.453583952875311e-5
+iteration: 35 || residual: 3.9775610916668325e-5
+iteration: 36 || residual: 2.9372105037310432e-5
+iteration: 37 || residual: 2.279419517889886e-5
+iteration: 38 || residual: 1.5967469852593157e-5
+iteration: 39 || residual: 1.2786449535478582e-5
+iteration: 40 || residual: 8.940654114078587e-6
+iteration: 41 || residual: 6.980401637520285e-6
+iteration: 42 || residual: 5.125924517676182e-6
+iteration: 43 || residual: 3.7584578837952673e-6
+iteration: 44 || residual: 2.9332244115502333e-6
+iteration: 45 || residual: 2.048384639395982e-6
+iteration: 46 || residual: 1.6404253527409267e-6
+iteration: 47 || residual: 1.1508517866895552e-6
+iteration: 48 || residual: 8.933537282124177e-7
+gmres || || omega: 3.0 || number of elements: 19 by 11
+time step size for the wave solver: 0.00046284974638523653
+values of omega:
+[2.1, 2.2, 2.3000000000000003, 2.4000000000000004, 2.5, 2.6, 2.7, 2.8000000000000003, 2.9, 3.0]
+iterations for convergence: whi
+[7.0, 6.0, 9.0, 12.0, 15.0, 19.0, 24.0, 30.0, 38.0, 48.0]
+iterations for convergence: gmres
+[6.0, 6.0, 6.0, 7.0, 7.0, 7.0, 7.0, 7.0, 8.0, 7.0]

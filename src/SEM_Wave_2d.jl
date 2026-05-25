@@ -8,6 +8,12 @@ using Plots
 using FastGaussQuadrature
 using Polynomials
 using TimerOutputs
+using IterativeSolvers
+using LinearMaps
+using StaticArrays
+#using LoopVectorization
+using LinearAlgebra.BLAS
+using Base.Threads
 
 include("MMS.jl")
 using .MMS
@@ -32,6 +38,7 @@ mutable struct SEM_Wave
     uPrev::Matrix{Float64}          # value of the displacement in the previous timepoint
     uNow::Matrix{Float64}           # value of the displacement in the current timepoint
     uNext::Matrix{Float64}          # value of the displacement in the next timepoint
+    scratch::Matrix{Float64}        # scratch space
     uFiltered::Matrix{Float64}      # the filtered time average of u for use in Waveholtz
     uDerFiltered::Matrix{Float64}   # the filtered time average of u_t for use in Waveholtz
 
@@ -47,6 +54,10 @@ mutable struct SEM_Wave
     G::Array{Float64}               # the reference stiffness matrix: G_{jm} = \sum_{l=0}^{N} w_l l'_m(\xi_l) l'_j(\xi_l); w_l \in QuadWeights, \xi_l \in QuadPoints, l_j's are the Lagrange polynomials                            
     M::Matrix{Float64}              # the mass matrix
     M_b::Matrix{Float64}            # the mass matrix on the boundary, used to handle terms from the boundary intergral
+    #DxMatrices::Vector{SMatrix}
+    #DyMatrices::Vector{SMatrix}
+    DxMatrices::Vector{Matrix{Float64}}
+    DyMatrices::Vector{Matrix{Float64}}
     
     useMMS::Bool                    # determines whether an MMS test is run or not
     MMS_j::MMS_jet                  # stores the relevant data for the MMS test
@@ -68,6 +79,7 @@ mutable struct SEM_Wave
         uPrev = zeros(Ky*N + 1, Kx*N + 1)
         uNow = zeros(Ky*N + 1, Kx*N + 1)
         uNext = zeros(Ky*N + 1, Kx*N + 1)
+        scratch = zeros(Ky*N + 1, Kx*N + 1)
         
         xNodes = collect(LinRange(xLims[1], xLims[2], Kx+1))
         yNodes = collect(LinRange(yLims[1], yLims[2], Ky+1))
@@ -99,6 +111,9 @@ mutable struct SEM_Wave
         M, M_b = ConstructMs(xNodes, yNodes, QuadWeights)
         M_b = sqrt.(c_squareMatrix) .* M_b
 
+        # make and store the many small matrices that will be used to calculate the derivatives in LaplaceTerm.
+        DxMatrices, DyMatrices = ConstructDmatrices(Kx, Ky, D, QuadWeights, c_squareMatrix, xNodes, yNodes) 
+
         # change some coefficients in the MMS
         MMS_j = MMS.MMS_jet(ones(3, 1), 3) # dimension 3, corresponding to (x, y, t) in that order.
         MMS_j.coeff[1, 2] = 2.0
@@ -109,22 +124,24 @@ mutable struct SEM_Wave
         MMS_c = MMS.MMS_jet(ones(2, 1), 2) # dimension 2, corresponding to (x, y) in that order.
 
             new(xNodes, yNodes, N, x, y, c_squareMatrix, nsteps, Tend, timestep,
-                uPrev, uNow, uNext, uFiltered, uDerFiltered, fVals, omega, bc, g, QuadPoints, QuadWeights, D, G, M, M_b, useMMS, MMS_j, MMS_c, MMS_intDiff, MMS_int)
+                uPrev, uNow, uNext, scratch, uFiltered, uDerFiltered, fVals, omega, bc, g, QuadPoints, QuadWeights, D, G, M, M_b, DxMatrices, DyMatrices, useMMS, MMS_j, MMS_c, MMS_intDiff, MMS_int)
         
     end
 
 end
 
-function Simulate(simul::SEM_Wave, uStart, uStartDer, Tend::Float64, nsteps::Int64, forcing::Matrix{Float64}, omega::Float64, bc::Vector{Float64}, g::Matrix{Float64}, animate = false, snapshotFrequency = 10, plotHeight = 1000.0, animationName = "test.gif")
+function Simulate(simul::SEM_Wave, uStart, uStartDer, Tend::Float64, nsteps::Int64, forcing::Matrix{Float64}, omega::Float64, alphas::Vector{Float64}, g::Matrix{Float64}, animate = false, snapshotFrequency = 10, plotHeight = 1000.0, animationName = "test.gif")
     # approximates a solution to the wave equation using SEM_Wave
     # creates a gif named animationName if animate == true
     # snapshotFrequency decides how many steps are made before a frame is saved in the gif
     # the y-axis shown in the gif is [-plotHeight, plotHeight]
 
     # the filtered solution and derivative should always be reset, otherwise repeated calls to Waveholtz will produce the wrong result
-    
+    #to = TimerOutput()
 
-    Initialise!(simul, uStart, uStartDer, Tend, nsteps, forcing, omega, bc, g)  # calculates values for t = -simul.timestep using values at t = 0:
+    
+    Initialise!(simul, uStart, uStartDer, Tend, nsteps, forcing, omega, alphas, g)  # calculates values for t = -simul.timestep using values at t = 0:
+
 
     # create an Animation if one is asked for
     if (animate == true)
@@ -164,39 +181,50 @@ function Simulate(simul::SEM_Wave, uStart, uStartDer, Tend::Float64, nsteps::Int
 
     # return simul.uNow
 
+    #show(to)
+
 end
 
 
 
-function MakeStep!(simul::SEM_Wave, stepnumber::Int64)    
+function MakeStep!(simul::SEM_Wave, stepnumber::Int64) 
+    
+    to = TimerOutput()
 
     t = stepnumber*simul.timestep # the time at uNow after(!) this step
 
+    
+    
     simul.uNext = TimeSteppingTerm(simul) + 
                   LaplaceTerm(simul, simul.uNow) + 
+                  #LaplaceTermOld(simul, simul.uNow) + 
                   ForcingTerm(simul, stepnumber) + 
                   BoundaryTerm(simul, stepnumber)
 
-    #tester = TimeSteppingTerm(simul)
-    #tester[2:end-1, 2:end-1] = zeros(length(simul.y)-2, length(simul.x)-2)
-    #println("TimeSteppingTerm maximum on boundary: " * string(maximum(tester)))
+    lap1 = LaplaceTermOld(simul, simul.uNow)
+    lap2 = LaplaceTerm(simul, simul.uNow)
+    println(maximum(abs.(lap1 - lap2)))
 
-    #println("time: " * string(t) * " || BoundaryTerm maximum: " * string(maximum(BoundaryTerm(simul, stepnumber))))
-    #println("time: " * string(t) * " || Laplaceterm maximum: " * string(maximum(LaplaceTerm(simul, simul.uNow))))
-    #println("time: " * string(t) * " || TimeStepping maximum: " * string(maximum(abs.(TimeSteppingTerm(simul)))))
-    #println("time: " * string(t) * " || forcing maximum: " * string(maximum(abs.(ForcingTerm(simul, stepnumber)))))
+    #println(maximum(abs.(ParLaplaceTerm(simul, simul.uNow) - LaplaceTerm(simul, simul.uNow))))
 
-    #forcingTest = ForcingTerm(simul, stepnumber)
-    #println("time: " * string(t) * ", value of at corner: " * string(forcingTest[1,1]))
-    #println("time: " * string(t) * ", value of at corner: " * string(simul.uNow[1,1]))
+    #@timeit to "laplace" LaplaceTerm(simul, simul.uNow)
+    #@timeit to "parallel laplace" ParLaplaceTerm(simul, simul.uNow)
+    #@timeit to "laplace" LaplaceTerm(simul, simul.uNow)
+    #@timeit to "laplace old" LaplaceTermOld(simul, simul.uNow)
 
-    # use a second-order approximation of the derivative at t using known values
+    #=
+    @timeit to "timestep" TimeSteppingTerm(simul)
+    @timeit to "laplace" LaplaceTerm(simul, simul.uNow)
+    @timeit to "forcing" ForcingTerm(simul, stepnumber)
+    @timeit to "boundary" BoundaryTerm(simul, stepnumber)
+    =#
+
+    ########################### OLD VERSION ###########################
+    #=
+    # use a second-order approximations of the derivative at t and t-simul.timestep using known values
     uDer = ((3/2)*simul.uNext - 2*simul.uNow + 0.5*simul.uPrev) ./ simul.timestep 
-    
-    #uDer = (simul.uNext - simul.uNow)./simul.timestep
     uDerPrev = (simul.uNext - simul.uPrev) ./ (2*simul.timestep)
-    #uDerPrev = (simul.uNow - simul.uPrev) ./ simul.timestep
-    
+
 
     ###########
     # update the variables
@@ -216,6 +244,51 @@ function MakeStep!(simul::SEM_Wave, stepnumber::Int64)
     #println("time: " * string(t) * " || filtered maximum: " * string(maximum(simul.uFiltered)))
     #println("time: " * string(t) * " || filtered der maximum: " * string(maximum(simul.uDerFiltered)))    
 
+    =#
+    ###################################################################
+
+
+    ########################### NEW VERSION ###########################
+    
+    @timeit to "time derivative" uDer = (simul.uNext - simul.uPrev) ./ (2*simul.timestep) # derivative at time t - simul.timestep (second order)
+
+    # filter the solution for use in Waveholtz
+    K = (cos(simul.omega*(t-simul.timestep)) - 0.25) * (2/simul.Tend)
+
+    if (stepnumber == 1)
+        weight = 0.5 * simul.timestep
+    else
+        weight = 1.0 * simul.timestep
+    end
+
+    @timeit to "trapezoidal rule real part" simul.uFiltered = simul.uFiltered + simul.uNow * K * weight # simul.uNow corresponds to time t - simul.timestep
+    @timeit to "trapezoidal rule imag part" simul.uDerFiltered = simul.uDerFiltered + uDer * K * weight
+
+
+    if (stepnumber == simul.nsteps) # add the final term, corresponding to time t
+        
+        #uDer = (simul.uNext - simul.uNow)/simul.timestep #first-order approximation of the derivative at t = simul.Tend
+        @timeit to "time derivative" uDer = ((3/2)*simul.uNext - 2*simul.uNow + 0.5*simul.uPrev) ./ simul.timestep # derivative at time t (second order)
+
+        K = (cos(simul.omega*t) - 0.25) * (2/simul.Tend) 
+        
+        #println("should be (3*omega)/(4*pi) = " *string((3*simul.omega)/(4*pi)))
+        #println(K)
+
+        @timeit to "trapezoidal rule real part" simul.uFiltered = simul.uFiltered + simul.uNext * K * 0.5 * simul.timestep # simul.uNext corresponds to time t = simul.Tend
+        @timeit to "trapezoidal rule imag part" simul.uDerFiltered = simul.uDerFiltered + uDer * K * 0.5 * simul.timestep 
+
+    end
+    
+    
+
+    # update the variables
+    simul.uPrev = simul.uNow
+    simul.uNow = simul.uNext
+
+    #println(maximum(abs.(simul.uNow)))
+
+    ###################################################################
 
     # integrates the MMS error, if we are doing an MMS run.
     if (simul.useMMS)
@@ -228,7 +301,7 @@ function MakeStep!(simul::SEM_Wave, stepnumber::Int64)
                 reference[i, j] = MMS.MMSfun(simul.x[j], simul.y[end+1-i], t, 0, 0, 0, simul.MMS_j)
             end
         end
-        
+
         simul.MMS_intDiff += abs.(simul.uNow - reference) * 2 * simul.timestep
         simul.MMS_int += abs.(simul.uNow) * 2 * simul.timestep
 
@@ -241,27 +314,53 @@ function MakeStep!(simul::SEM_Wave, stepnumber::Int64)
 
     end
 
+    #show(to)
+
+
+    
 
 end
 
-function LaplaceTerm(simul::SEM_Wave, U::Matrix{Float64})
+function LaplaceTermOld(simul::SEM_Wave, U::Matrix{Float64})
 
-    #to = TimerOutput()
+    to = TimerOutput()
 
-    pointsPerElement = simul.N + 1                                      # number of quadrature points
+    @timeit to "fetching data" pointsPerElement = simul.N + 1                                      # number of quadrature points
 
     Kx = length(simul.xNodes) - 1                                       # number of elements in the x-direction
     Ky = length(simul.yNodes) - 1                                       # number of elements in the y-direction        
 
-    laplaceVals = zeros(length(simul.y), length(simul.x))
+    @timeit to "make" laplaceVals = zeros(length(simul.y), length(simul.x))
 
-    U_k = zeros(pointsPerElement, pointsPerElement)
-    V_k = zeros(pointsPerElement, pointsPerElement)
-    #V_k_old = zeros(pointsPerElement, pointsPerElement)
-    G = simul.G
-    D = simul.D
+    @timeit to "make" U_k = zeros(pointsPerElement, pointsPerElement)
+    @timeit to "make" V_k = zeros(pointsPerElement, pointsPerElement)
+
+    @timeit to "make" V_kx = zeros(pointsPerElement, pointsPerElement) # x-derivative part
+    @timeit to "make" V_ky = zeros(pointsPerElement, pointsPerElement) # y-derivative part
+    @timeit to "make" scratch = zeros(pointsPerElement, 1)
+
+
+    @timeit to "fetching data" G = simul.G
+    @timeit to "fetching data" D = simul.D
 
     alpha = simul.bc[1]; beta = simul.bc[2]
+
+
+
+
+    # placeholders for doing the matmuls using mul! (probably incredibly suboptimal v.r.t. elegance)
+    @timeit to "make" DtW = zeros(pointsPerElement, pointsPerElement) 
+    @timeit to "make" prod1 = zeros(pointsPerElement, pointsPerElement) 
+    @timeit to "make" prod2 = zeros(pointsPerElement, pointsPerElement) 
+    @timeit to "make" row = zeros(1, pointsPerElement)
+    @timeit to "make" column = zeros(pointsPerElement, 1)
+
+    @timeit to "make" scratch1 = zeros(pointsPerElement, pointsPerElement) 
+    @timeit to "make" scratch2 = zeros(pointsPerElement, pointsPerElement)
+
+    @timeit to "diagm" W = diagm(simul.QuadWeights)
+
+    @timeit to "mul clean" mul!(DtW, transpose(simul.D), W) # a matrix which is needed for both V_kx and V_ky
 
     for k = 1:Kx*Ky
 
@@ -270,90 +369,346 @@ function LaplaceTerm(simul::SEM_Wave, U::Matrix{Float64})
 
         delta_x_k = simul.xNodes[i+1] - simul.xNodes[i]
         delta_y_k = simul.yNodes[j+1] - simul.yNodes[j]
-
-        #=
-        @timeit to "delta_x_k" delta_x_k = simul.nodes[k+1] - simul.nodes[k]
-
-        @timeit to "get" u_k .= GetDegreesOfFreedom(simul, k, u)
-
-        #@timeit to "v_k" v_k .= (2/delta_x_k) * (simul.G*u_k)
-
-        @timeit to "v_k" mul!(v_k, simul.G, u_k, 2/delta_x_k, 0)
-
-        @timeit to "Set" SetDegreesOfFreedom!(simul, k, laplaceVals, v_k, true)
-        =#
-
-        U_k .= GetDegreesOfFreedom(simul, k, U)
         
+        @timeit to "get" U_k .= GetDegreesOfFreedom(simul, k, U)
 
-        #U_k .=  GetDegreesOfFreedom(simul, k, simul.c_square) .* GetDegreesOfFreedom(simul, k, U)
+        @timeit to "get" c_square_k = GetDegreesOfFreedom(simul, k, simul.c_square)
 
-        #println(size(U_k))
-
-        #mul!(v_k, G, u_k, 2/delta_x_k, 0)
-
-        #V_k_old .= (delta_y_k/delta_x_k) * simul.QuadWeights .* (U_k * G) .+ (delta_x_k/delta_y_k) * simul.QuadWeights' .* (G * U_k) # works for constant wavespeed
         
         
-        
-        U_k .= GetDegreesOfFreedom(simul, k, U)
-
-        c_square_k = GetDegreesOfFreedom(simul, k, simul.c_square)
-
-        W = diagm(simul.QuadWeights)
-
-        V_kx = zeros(pointsPerElement, pointsPerElement) # x-derivative part
-        V_ky = zeros(pointsPerElement, pointsPerElement) # y-derivative part
+        @timeit to "make" V_kx = zeros(pointsPerElement, pointsPerElement) # x-derivative part
+        @timeit to "make" V_ky = zeros(pointsPerElement, pointsPerElement) # y-derivative part
 
         # placeholders for doing the matmuls using mul! (probably incredibly suboptimal v.r.t. elegance)
-        DtW = zeros(pointsPerElement, pointsPerElement) 
-        prod1 = zeros(pointsPerElement, pointsPerElement) 
-        prod2 = zeros(pointsPerElement, pointsPerElement) 
-        row = zeros(1, pointsPerElement)
-        column = zeros(pointsPerElement, 1)
-        
-        mul!(DtW, transpose(simul.D), W) # a matrix which is needed for both V_kx and V_ky
+        @timeit to "make" prod1 = zeros(pointsPerElement, pointsPerElement) 
+        @timeit to "make" prod2 = zeros(pointsPerElement, pointsPerElement) 
+        @timeit to "make" row = zeros(1, pointsPerElement)
+        @timeit to "make" column = zeros(pointsPerElement, 1)
 
         for j = 1:pointsPerElement # fill the matrices, column by column or row by row:
-            
-            # build V_kx and V_xy in steps, adding a factor at a time...
-            mul!(prod1, diagm(c_square_k[j, :]), simul.D)
-            mul!(prod2, DtW, prod1)
-            mul!(row, Matrix(U_k[j, :]'), prod2, delta_y_k/delta_x_k, 0)
-            V_kx[j, :] = row
 
-            mul!(prod1, diagm(c_square_k[:, j]), simul.D)
-            mul!(prod2, DtW, prod1)
-            mul!(column, prod2, U_k[:, j], delta_x_k/delta_y_k, 0)
-            V_ky[:, j] = column
+            ########### older version ###########
+            # build V_kx and V_xy in steps, adding a factor at a time...
+
+            @timeit to "mul diag 1" mul!(prod1, Diagonal(c_square_k[j, :]), simul.D)
+            @timeit to "mul clean" mul!(prod2, DtW, prod1)
+            @timeit to "mul" mul!(row, Matrix(U_k[j, :]'), prod2, delta_y_k/delta_x_k, 0)
+            @timeit to "store" V_kx[j, :] = row
+
+
+            @timeit to "mul diag 1" mul!(prod1, Diagonal(c_square_k[:, j]), simul.D)
+            @timeit to "mul clean" mul!(prod2, DtW, prod1)
+            @timeit to "mul" mul!(column, prod2, U_k[:, j], delta_x_k/delta_y_k, 0)
+            @timeit to "store" V_ky[:, j] = column
+
+        end
+
+
+    
+        @timeit to "weightsMul" V_kx .= simul.QuadWeights .* V_kx
+        @timeit to "weightsMul" V_ky .= simul.QuadWeights' .* V_ky
+        
+        #V_kx = (delta_y_k/delta_x_k) * simul.QuadWeights .* V_kx
+        #V_ky = (delta_x_k/delta_y_k) * simul.QuadWeights' .* V_ky
+
+        @timeit to "add" V_k .= V_kx .+ V_ky
+        
+        @timeit to "set" SetDegreesOfFreedom!(simul, k, laplaceVals, V_k, true)
+        #SetDegreesOfFreedom!(simul, k, laplaceVals, V_k_old, true)
+
+    end
+
+    @timeit to "adjustments" laplaceVals .= - (simul.timestep^2 ./ (simul.M .+ 0.5 .* (alpha/beta).*simul.timestep.*simul.M_b)) .* laplaceVals   #u Laplace v = div(u grad v) - grad u \cdot grad v, hence the sign
+
+    #show(to)
+
+    return laplaceVals
+
+end
+
+function LaplaceTerm(simul::SEM_Wave, U::Matrix{Float64})
+
+    to = TimerOutput()
+
+    @timeit to "fetching data" pointsPerElement = simul.N + 1                                      # number of quadrature points
+
+    Kx = length(simul.xNodes) - 1                                       # number of elements in the x-direction
+    Ky = length(simul.yNodes) - 1                                       # number of elements in the y-direction        
+
+    @timeit to "make" laplaceVals = zeros(length(simul.y), length(simul.x))
+
+    @timeit to "make" U_k = zeros(pointsPerElement, pointsPerElement)
+    @timeit to "make" V_k = zeros(pointsPerElement, pointsPerElement)
+
+    @timeit to "make" V_kx = zeros(pointsPerElement, pointsPerElement) # x-derivative part
+    @timeit to "make" V_ky = zeros(pointsPerElement, pointsPerElement) # y-derivative part
+    @timeit to "make" scratch = zeros(pointsPerElement, 1)
+
+
+    @timeit to "fetching data" G = simul.G
+    @timeit to "fetching data" D = simul.D
+
+    alpha = simul.bc[1]; beta = simul.bc[2]
+
+
+    @timeit to "make" scratchMat = zeros(pointsPerElement, pointsPerElement)
+
+    #@timeit to "make" V_kx = MMatrix{pointsPerElement, pointsPerElement, Float64}(undef)  # Mutable static matrix
+    #@timeit to "make" V_ky = MMatrix{pointsPerElement, pointsPerElement, Float64}(undef)
+
+    #=
+    @timeit to "new make" row1 = zeros(pointsPerElement, 1)
+    @timeit to "new make" row2 = zeros(pointsPerElement, 1)
+    @timeit to "new make" col1 = zeros(pointsPerElement, 1)
+    @timeit to "new make" col2 = zeros(pointsPerElement, 1)
+    @timeit to "new make" scratch = zeros(pointsPerElement, 1)
+    @timeit to "new make" scratchMat = zeros(pointsPerElement, pointsPerElement)
+    =#
+
+    for k = 1:Kx*Ky
+
+        #=
+
+        i = mod(k - 1, Kx) + 1
+        j = Int((k - i) / Kx) + 1
+
+        delta_x_k = simul.xNodes[i+1] - simul.xNodes[i]
+        delta_y_k = simul.yNodes[j+1] - simul.yNodes[j]
+
+        =#
+       
+        @timeit to "get" U_k .= GetDegreesOfFreedom(simul, k, U)
+
+        @timeit to "get" c_square_k = GetDegreesOfFreedom(simul, k, simul.c_square)
+
+        #@turbo for j = 1:pointsPerElement # fill the matrices, column by column or row by row:
+        for j = 1:pointsPerElement # fill the matrices, column by column or row by row:
+
+            ########### optimised(?) version ###########
+
+            #=
+
+            @timeit to "views" scratch = @view U_k[j, :]
+            @timeit to "views" scratchMat = @views simul.D
+            @timeit to "row*full" transpose(mul!(row1, scratchMat, scratch, delta_y_k/delta_x_k, 0)) # what is even the point of the transposition here?
+            #@timeit to "row*full" transpose(mul!(row1, simul.D, scratch, delta_y_k/delta_x_k, 0))
+            
+            #@timeit to "row*full" transpose(mul!(row1, simul.D, U_k[j, :], delta_y_k/delta_x_k, 0))
+            @timeit to "transposing" row1 = transpose(row1)
+            #@timeit to "new row*diags" rmul!(row1, Diagonal(simul.QuadWeights .* c_square_k[j, :]))
+            
+            #=
+            for t = 1:pointsPerElement
+                @timeit to "row*diags" row1[t] = row1[t]*simul.QuadWeights[t]*c_square_k[j, t]
+            end
+            =#
+
+            @timeit to "row*diags" rmul!(row1, Diagonal(simul.QuadWeights))
+            @timeit to "row*diags" rmul!(row1, Diagonal(@view c_square_k[j, :]))
+
+            #@timeit to "views" scratch = @views transpose(row1)
+            @timeit to "views" row1 = transpose(@views row1)
+            @timeit to "views" scratchMat = transpose(@views simul.D)
+            #@timeit to "row*full" transpose(mul!(row2, scratchMat, row1))
+            @timeit to "row*full" transpose(mul!(row2, scratchMat, scratch))
+            #@timeit to "row*full" transpose(mul!(row2, transpose(simul.D), row1))
+            @timeit to "store" V_kx[j, :] = row2
+            
+            @timeit to "views" scratch = @view U_k[:, j]
+            @timeit to "full*col" transpose(mul!(col1, simul.D, scratch, delta_x_k/delta_y_k, 0))
+            #@timeit to "new col*diags" lmul!(Diagonal(simul.QuadWeights .* c_square_k[:, j]), col1)
+
+            @timeit to "col*diags" lmul!(Diagonal(simul.QuadWeights), col1)
+            @timeit to "col*diags" lmul!(Diagonal(@view c_square_k[:, j]), col1)
+
+            @timeit to "full*col" mul!(col2, scratchMat, col1)
+            #@timeit to "full*col" mul!(col2, transpose(simul.D), col1)
+            @timeit to "store" V_ky[:, j] = col2
 
             #@timeit to "xDer matmuls" V_kx[j, :] = U_k[j, :]' * (transpose(simul.D) * W * diagm(c_square_k[j, :]) * simul.D)
             #@timeit to "yDer matmuls" V_ky[:, j] = transpose(simul.D) * W * diagm(c_square_k[:, j]) * simul.D * U_k[:, j]
 
-        end
+            =#
 
+
+            ########### The Version to End All Versions ###########
+            @timeit to "VecMat" mul!((@view V_kx[j, :]), simul.DxMatrices[(k-1)*pointsPerElement + j], @view U_k[j, :])
+            @timeit to "MatVec" mul!((@view V_ky[:, j]), simul.DyMatrices[(k-1)*pointsPerElement + j], @view U_k[:, j])
+
+            #index = (k-1)*pointsPerElement + j
+            #@timeit to "VecMat2" scratchMat .= simul.DxMatrices[index]
+            #@timeit to "VecMat" BLAS.gemv!('T', 1.0, scratchMat, @view(U_k[j, :]), 0.0, @view(V_kx[j, :]))
+            #@timeit to "VecMat" BLAS.gemv!('T', 1.0, simul.DxMatrices[index], @view(U_k[j, :]), 0.0, @view(V_kx[j, :]))
+            #@timeit to "MatVec2" scratchMat .= simul.DyMatrices[index]
+            #@timeit to "MatVec" BLAS.gemv!('N', 1.0, scratchMat, @view(U_k[:, j]), 0.0, @view(V_ky[:, j]))
+            #@timeit to "MatVec" BLAS.gemv!('N', 1.0, simul.DyMatrices[index], @view(U_k[:, j]), 0.0, @view(V_ky[:, j]))
+
+            #@timeit to "VecMat" V_kx[j, :] = U_k[j, :]' * simul.DxMatrices[(k-1)*pointsPerElement + j]
+            #@timeit to "VecMat" V_kx[j, :] = adjoint(@view U_k[j, :]) * simul.DxMatrices[(k-1)*pointsPerElement + j]
+            #@timeit to "VecMat" mul!(@view(V_kx[j, :]), simul.DxMatrices[(k-1)*pointsPerElement + j]', @view(U_k[j, :]))
+            #@timeit to "VecMat" mul!(scratch, simul.DxMatrices[(k-1)*pointsPerElement + j], U_k[j, :])
+            #@timeit to "VecMat" V_kx[j, :] = scratch
+
+            #@timeit to "MatVec" V_ky[:, j] = simul.DyMatrices[(k-1)*pointsPerElement + j] * U_k[:, j]
+            #@timeit to "MatVec" V_ky[:, j] = simul.DyMatrices[(k-1)*pointsPerElement + j] * @view U_k[:, j]
+            #@timeit to "MatVec" mul!(@view(V_ky[:, j]), simul.DyMatrices[(k-1)*pointsPerElement + j], @view(U_k[:, j]))
+            #@timeit to "MatVec" V_ky[:, j] = U_k[:, j]' * transpose(simul.DyMatrices[(k-1)*pointsPerElement + j])
+            #@timeit to "MatVec" mul!(V_ky[:, j], simul.DyMatrices[(k-1)*pointsPerElement + j], @view U_k[:, j])
+            #@timeit to "MatVec" mul!(scratch, simul.DyMatrices[(k-1)*pointsPerElement + j], U_k[:, j])
+            #@timeit to "MatVec" V_ky[:, j] = scratch
+
+        end
+        
     
-        V_kx = simul.QuadWeights .* V_kx
-        V_ky = simul.QuadWeights' .* V_ky
+        @timeit to "weightsMul" V_kx .= simul.QuadWeights .* V_kx
+        @timeit to "weightsMul" V_ky .= simul.QuadWeights' .* V_ky
+        
         #V_kx = (delta_y_k/delta_x_k) * simul.QuadWeights .* V_kx
         #V_ky = (delta_x_k/delta_y_k) * simul.QuadWeights' .* V_ky
 
-        V_k = V_kx .+ V_ky
+        @timeit to "add" V_k .= V_kx .+ V_ky
+
         
-        SetDegreesOfFreedom!(simul, k, laplaceVals, V_k, true)
+        @timeit to "set" SetDegreesOfFreedom!(simul, k, laplaceVals, V_k, true)
         #SetDegreesOfFreedom!(simul, k, laplaceVals, V_k_old, true)
 
         #println("max abs difference between old and new methods: " * string(maximum(abs.(V_k-V_k_old)))) # this difference was something on the order of 1e-15 when I tried it
 
     end
 
-    #show(to)
 
-    laplaceVals .= - (simul.timestep^2 ./ (simul.M + 0.5*(alpha/beta)*simul.timestep*simul.M_b)) .* laplaceVals   #u Laplace v = div(u grad v) - grad u \cdot grad v, hence the sign
+    @timeit to "adjustments" laplaceVals .= .- (simul.timestep^2 ./ (simul.M .+ 0.5 .* (alpha/beta).*simul.timestep.*simul.M_b)) .* laplaceVals   #u Laplace v = div(u grad v) - grad u \cdot grad v, hence the sign
+
+    #show(to)
 
     return laplaceVals
 
 end
+
+
+
+function ParLaplaceTerm(simul::SEM_Wave, U::Matrix{Float64}) ############# Claude-generated from LaplaceTerm #############
+
+    to = TimerOutput()
+
+    @timeit to "fetching data" pointsPerElement = simul.N + 1                                      # number of quadrature points
+
+    Kx = length(simul.xNodes) - 1                                       # number of elements in the x-direction
+    Ky = length(simul.yNodes) - 1                                       # number of elements in the y-direction        
+
+
+    @timeit to "fetching data" G = simul.G
+    @timeit to "fetching data" D = simul.D
+
+    alpha = simul.bc[1]; beta = simul.bc[2]
+
+
+    @timeit to "make" laplaceVals = zeros(length(simul.y), length(simul.x))
+
+    #lk = ReentrantLock()
+
+    used_buffers = Channel{Matrix{Float64}}(Inf)
+
+
+    nbuffers = 2 * nthreads()
+    buffers = [(
+        U_k          = zeros(pointsPerElement, pointsPerElement),
+        V_kx         = zeros(pointsPerElement, pointsPerElement),
+        V_ky         = zeros(pointsPerElement, pointsPerElement),
+        laplaceLocal = zeros(length(simul.y), length(simul.x)),
+    ) for _ in 1:nbuffers]
+
+    @timeit to "parallel laplace loop" @threads for k in 1:Kx*Ky
+        
+        buf = buffers[threadid()]  # no allocation, just an index lookup
+        (; U_k, V_kx, V_ky, laplaceLocal) = buf
+
+        # previous version
+        #= 
+        is_new = !haskey(task_local_storage(), :laplace_bufs)
+
+        buf = get!(() -> (
+            U_k     = zeros(pointsPerElement, pointsPerElement),
+            V_kx    = zeros(pointsPerElement, pointsPerElement),
+            V_ky    = zeros(pointsPerElement, pointsPerElement),
+            laplaceLocal = zeros(length(simul.y), length(simul.x)),
+        ), task_local_storage(), :laplace_bufs)
+
+        if is_new
+            put!(used_buffers, buf.laplaceLocal)
+        end 
+
+        =#
+
+        #=
+        # new attempt
+        if !haskey(task_local_storage(), :laplace_bufs)
+            task_local_storage(:laplace_bufs, (
+                U_k          = zeros(pointsPerElement, pointsPerElement),
+                V_kx         = zeros(pointsPerElement, pointsPerElement),
+                V_ky         = zeros(pointsPerElement, pointsPerElement),
+                laplaceLocal = zeros(length(simul.y), length(simul.x)),
+            ))
+            put!(used_buffers, task_local_storage(:laplace_bufs).laplaceLocal)
+        end
+        buf = task_local_storage(:laplace_bufs)
+
+        (; U_k, V_kx, V_ky, laplaceLocal) = buf
+        =#
+
+        U_k .= GetDegreesOfFreedom(simul, k, U)
+
+        for j = 1:pointsPerElement # fill the matrices, column by column or row by row:
+
+            mul!((@view V_kx[j, :]), simul.DxMatrices[(k-1)*pointsPerElement + j], @view U_k[j, :])
+            mul!((@view V_ky[:, j]), simul.DyMatrices[(k-1)*pointsPerElement + j], @view U_k[:, j])
+
+        end
+
+
+        V_kx .= simul.QuadWeights .* V_kx
+        V_ky .= simul.QuadWeights' .* V_ky
+        V_kx .+= V_ky
+
+        SetDegreesOfFreedom!(simul, k, laplaceLocal, V_kx, true)
+        
+
+        #=
+        lock(lk) do        
+            SetDegreesOfFreedom!(simul, k, laplaceVals, V_kx, true)
+        end
+        =#
+
+    end
+
+    close(used_buffers)
+
+    fill!(laplaceVals, 0)
+
+    for buf in buffers
+        laplaceVals .+= buf.laplaceLocal
+    end
+
+
+
+    #=
+    @timeit to "merge thread data" for val in values(task_local_storage())
+        if val isa NamedTuple && hasfield(typeof(val), :laplaceLocal)
+            laplaceVals .+= val.laplaceLocal
+        end
+    end
+    =#
+
+    @timeit to "adjustments" laplaceVals .= .- (simul.timestep^2 ./ (simul.M .+ 0.5 .* (alpha/beta).*simul.timestep.*simul.M_b)) .* laplaceVals   #u Laplace v = div(u grad v) - grad u \cdot grad v, hence the sign
+
+    show(to)
+
+    return laplaceVals
+
+end
+
+
+
 
 
 function ForcingTerm(simul::SEM_Wave, stepnumber::Int64)
@@ -364,7 +719,6 @@ function ForcingTerm(simul::SEM_Wave, stepnumber::Int64)
     Ky = length(simul.yNodes) - 1                                       # number of elements in the y-direction        
 
     forcingVals = zeros(length(simul.y), length(simul.x))
-
     F_k = zeros(pointsPerElement, pointsPerElement)
 
     QuadWeightsMat = simul.QuadWeights * simul.QuadWeights'
@@ -383,10 +737,6 @@ function ForcingTerm(simul::SEM_Wave, stepnumber::Int64)
         end
     end
 
-    #println(simul.fVals[1, 1])
-
-    #else
-    QuadWeightsMat = simul.QuadWeights * simul.QuadWeights'
 
     for k = 1:Kx*Ky
 
@@ -408,6 +758,9 @@ function ForcingTerm(simul::SEM_Wave, stepnumber::Int64)
         forcingVals .= forcingVals .* cos(simul.omega*t)
     end
 
+    #println("older version: ")
+    #println(-(simul.timestep^2 ./ (simul.M + 0.5*(alpha/beta)*simul.timestep*simul.M_b)) .* forcingVals)
+    
     return -(simul.timestep^2 ./ (simul.M + 0.5*(alpha/beta)*simul.timestep*simul.M_b)) .* forcingVals    # negative sign because we are solving u_tt = u_xx + u_yy - fcos(\omega x) as opposed to u_tt = u_xx + u_yy + fcos(\omega x).
 
 end
@@ -437,12 +790,18 @@ function BoundaryTerm(simul::SEM_Wave, stepnumber::Int64)
 
         simul.g = alpha * refTimeDer + beta .* simul.c_square .* refNormalDer 
 
+
+
+
     end
 
     # if no MMS, simul.g already stores the correct information about g.
     # Now integrate g along the boundary
     boundaryVals = simul.M_b .* simul.g
 
+    #println("older version!")
+    #println(typeof((1/beta) * (simul.timestep^2 ./ (simul.M + 0.5*(alpha/beta)*simul.timestep*simul.M_b)) .* boundaryVals))
+    #println((1/beta) * (simul.timestep^2 ./ (simul.M + 0.5*(alpha/beta)*simul.timestep*simul.M_b)) .* boundaryVals )
 
     return (1/beta) * (simul.timestep^2 ./ (simul.M + 0.5*(alpha/beta)*simul.timestep*simul.M_b)) .* boundaryVals 
 
@@ -454,7 +813,20 @@ function TimeSteppingTerm(simul::SEM_Wave)
     alpha = simul.bc[1]; beta = simul.bc[2]    
     term = 2*simul.M .* simul.uNow + (0.5*(alpha/beta)*simul.timestep*simul.M_b - simul.M) .* simul.uPrev
 
+    #println("older version: ")
+    #println(term ./ (simul.M + 0.5*(alpha/beta) * simul.timestep * simul.M_b))
+
     return term ./ (simul.M + 0.5*(alpha/beta) * simul.timestep * simul.M_b)
+
+end
+
+
+function TimeSteppingTerm!(simul::SEM_Wave)
+
+    alpha = simul.bc[1]; beta = simul.bc[2]    
+    simul.scratch .= 2*simul.M .* simul.uNow .+ (0.5*(alpha/beta)*simul.timestep*simul.M_b - simul.M) .* simul.uPrev
+
+    simul.uNext .= simul.uNext .+ simul.scratch ./ (simul.M + 0.5*(alpha/beta) * simul.timestep * simul.M_b)
 
 end
 
@@ -493,8 +865,13 @@ function Initialise!(simul::SEM_Wave, uStart::Matrix{Float64}, uStartDer::Matrix
                 end    
 
             end
-        
+
         end
+
+        # we also need to update the precomputed matrices in that case
+        DxMatrices, DyMatrices = ConstructDmatrices(length(simul.xNodes)-1, length(simul.yNodes)-1, simul.D, simul.QuadWeights, simul.c_square, simul.xNodes, simul.yNodes) 
+        simul.DxMatrices = DxMatrices
+        simul.DyMatrices = DyMatrices
 
     end
 
@@ -509,25 +886,9 @@ function Initialise!(simul::SEM_Wave, uStart::Matrix{Float64}, uStartDer::Matrix
     G = (simul.M + 0.5*(alpha/beta)*simul.timestep*simul.M_b) .* BoundaryTerm(simul, 1) / simul.timestep^2
     F = (simul.M + 0.5*(alpha/beta)*simul.timestep*simul.M_b) .* ForcingTerm(simul, 1) / simul.timestep^2
 
-    simul.uPrev = uStart - simul.timestep*uStartDer + 0.5*simul.timestep^2*(1 ./ simul.M).*(G - (alpha/beta) * simul.M_b .* uStartDer +
+    simul.uPrev = uStart - simul.timestep*uStartDer + 0.5*simul.timestep^2 * (1 ./ simul.M).*(G - (alpha/beta) * simul.M_b .* uStartDer +
                                                                                             SU +
                                                                                             F)
-
-
-                                                                                            #=
-    tester = zeros(length(simul.y), length(simul.x))
-
-    tester .= simul.uPrev
-
-
-    println("uPrev maximum on interior: " * string(maximum(tester[2:end-1, 2:end-1])))
-
-    tester[2:end-1, 2:end-1] = zeros(length(simul.y)-2, length(simul.x)-2)
-    
-    
-    println("uPrev maximum on boundary: " * string(maximum(tester)))
-    println("uPrev maximum test: " * string(maximum(simul.uPrev)))
-    =#
 
     
     if (simul.useMMS == true)
@@ -608,6 +969,48 @@ function ConstructD(QuadPoints::Vector{Float64}, QuadWeights::Vector{Float64})
     end
 
     return D
+
+end
+
+function ConstructDmatrices(Kx, Ky, D, QuadWeights, c_squareMatrix, xNodes, yNodes)
+
+    # we want to, for each element, create and store the matrices (delta_x_k/delta_y_k)D^T diag(QuadWeigths) diag(c^k[row j]) D
+    # and the matrices (delta_y_k/delta_x_k) D^T diag(QuadWeights) diag(c^k[col j]) D
+    # these are used in LaplaceTerm
+
+    pointsPerElement = length(QuadWeights)
+    #DxMatrices = Vector{SMatrix{pointsPerElement, pointsPerElement}}(undef, Kx*Ky*pointsPerElement)
+    #DyMatrices = Vector{SMatrix{pointsPerElement, pointsPerElement}}(undef, Kx*Ky*pointsPerElement)
+    DxMatrices = Vector{Matrix{Float64}}(undef, Kx*Ky*pointsPerElement)
+    DyMatrices = Vector{Matrix{Float64}}(undef, Kx*Ky*pointsPerElement)
+    W = spdiagm(QuadWeights)
+
+    DtW = transpose(D)*W
+
+    for k = 1:Kx*Ky
+        i = mod(k - 1, Kx) + 1
+        j = Int((k - i) / Kx) + 1
+
+        delta_x_k = xNodes[i+1] - xNodes[i]
+        delta_y_k = yNodes[j+1] - yNodes[j]
+
+        # practically a duplicate of GetDegreesOfFreedom. We cannot use GetDegreesOfFreedom as is, as we do not yet have a SEM_Wave object to pass into the function...
+        xStart = (i - 1) * (pointsPerElement - 1)
+        yStart = (j - 1) * (pointsPerElement - 1)
+
+        c_square_k = @view c_squareMatrix[(yStart + 1):(yStart + pointsPerElement), (xStart + 1):(xStart + pointsPerElement)]
+        
+
+        for t = 1:pointsPerElement
+            #DxMatrices[(k-1)*pointsPerElement + t] = SMatrix{pointsPerElement, pointsPerElement}((delta_y_k/delta_x_k) * DtW * spdiagm(c_square_k[t, :]) * D)
+            #DyMatrices[(k-1)*pointsPerElement + t] = SMatrix{pointsPerElement, pointsPerElement}((delta_x_k/delta_y_k) * DtW * spdiagm(c_square_k[:, t]) * D)
+            DxMatrices[(k-1)*pointsPerElement + t] = Matrix(transpose((delta_y_k/delta_x_k) * DtW * spdiagm(c_square_k[t, :]) * D)) # in fact we will really make use the transpose of that matrix
+            DyMatrices[(k-1)*pointsPerElement + t] = (delta_x_k/delta_y_k) * DtW * spdiagm(c_square_k[:, t]) * D
+        end
+
+    end
+
+    return DxMatrices, DyMatrices
 
 end
 
@@ -711,7 +1114,8 @@ function GetDegreesOfFreedom(simul::SEM_Wave, k::Int64, u::Matrix{Float64})
     xStart = (i - 1) * (pointsPerElement - 1)
     yStart = (j - 1) * (pointsPerElement - 1)
 
-    return u[(yStart + 1):(yStart + pointsPerElement), (xStart + 1):(xStart + pointsPerElement)]
+    return @view u[(yStart + 1):(yStart + pointsPerElement), (xStart + 1):(xStart + pointsPerElement)]
+    #return u[(yStart + 1):(yStart + pointsPerElement), (xStart + 1):(xStart + pointsPerElement)]
 
 end
 
@@ -730,10 +1134,11 @@ function SetDegreesOfFreedom!(simul::SEM_Wave, k::Int64, v::Matrix{Float64}, v_k
     yStart = (j - 1) * (pointsPerElement - 1)
 
     if add
-        v[(yStart + 1):(yStart + pointsPerElement), (xStart + 1):(xStart + pointsPerElement)] .+= v_k
-        #view(v, (start + 1):(start + simul.PointsPerElement)) .+= v_k
+        #v[(yStart + 1):(yStart + pointsPerElement), (xStart + 1):(xStart + pointsPerElement)] .+= v_k
+        @views v[(yStart + 1):(yStart + pointsPerElement), (xStart + 1):(xStart + pointsPerElement)] .+= v_k
     else
-        v[(yStart + 1):(yStart + pointsPerElement), (xStart + 1):(xStart + pointsPerElement)] .= v_k
+        #v[(yStart + 1):(yStart + pointsPerElement), (xStart + 1):(xStart + pointsPerElement)] .= v_k
+        @views v[(yStart + 1):(yStart + pointsPerElement), (xStart + 1):(xStart + pointsPerElement)] .= v_k
     end
 
 end
@@ -889,10 +1294,14 @@ function Waveholtz(simul::SEM_Wave, omega::Float64, fVals::Matrix{Float64}, bc, 
     Tend = 2*pi/omega
     delta_x = minimum(simul.x[2:end] - simul.x[1:end-1])
     delta_y = minimum(simul.y[2:end] - simul.y[1:end-1])
-    spaceStep = minimum([delta_x delta_y])
-    nsteps = Integer(ceil(1.5*Tend * (1/delta_x + 1/delta_y)))
-    
+    cMax = sqrt(maximum(simul.c_square))
+    nsteps = Integer(ceil(Tend * cMax * (1/delta_x + 1/delta_y)))
+    #nsteps = Integer(ceil(0.5 * Tend * cMax * (1/delta_x + 1/delta_y)))
+
+
     timestep = Tend/nsteps
+
+    #println("Number of timesteps for waveholtz: " * string(nsteps) * " with a step size of " * string(timestep))
 
     # starting guess
     uStart = zeros(length(simul.y), length(simul.x))
@@ -901,27 +1310,38 @@ function Waveholtz(simul::SEM_Wave, omega::Float64, fVals::Matrix{Float64}, bc, 
 
     animate = false     # we do not want any animations of the wave eq solutions
     res = Inf
-    
-    
+
+
     nIter = 0
-    maxIter = 5000
+    maxIter = 1e5
+
 
     while res > tol
-        
+
+        to = TimerOutput()
+
         SEM_Wave_2d.Simulate(simul, uStart, uStartDer, Tend, nsteps, fVals, omega, bc, g, animate)
+
+        #show(to)
+
+        res = SEM_Wave_2d.SeminormWH(simul, uStart - simul.uFiltered, uStartDer - simul.uDerFiltered) / SEM_Wave_2d.SeminormWH(simul, uStart, uStartDer)
+
+        #res = (SEM_Wave_2d.GradIntegral(simul, uStart - simul.uFiltered, uStart - simul.uFiltered) + SEM_Wave_2d.LpNorm(simul, uStartDer, simul.uDerFiltered, 2)^2)^(1/2) / 
+        #        (SEM_Wave_2d.GradIntegral(simul, simul.fVals, simul.fVals))^(1/2)
 
         uStart = simul.uFiltered
         uStartDer = simul.uDerFiltered
+        
 
+        #=
         # relative residual
         if nIter > 1
-            res = (LpNorm(simul, simul.uFiltered, oldAppx[1:length(simul.y), :], 2)^2 + 
-                LpNorm(simul, simul.uDerFiltered, oldAppx[length(simul.y) + 1:end, :], 2)^2)^(0.5) /
-                (LpNorm(simul, oldAppx[1:length(simul.y), :], zeros(length(simul.y), length(simul.x)), 2)^2 + 
-                LpNorm(simul, oldAppx[length(simul.y) + 1:end, :], zeros(length(simul.y), length(simul.x)), 2)^2)^0.5
 
-            #res = LpNorm(simul, simul.uFiltered, oldAppx[1:length(simul.y), :], 2)/LpNorm(simul, simul.uFiltered, zeros(length(simul.y), length(simul.y)), 2)
+            res = (LpNorm(simul, simul.uFiltered, oldAppx[1:length(simul.y), :], 2)^2 + 
+                LpNorm(simul, simul.uDerFiltered, oldAppx[length(simul.y) + 1:end, :], 2)^2)^(0.5) / LpNorm(simul, simul.fVals, zeros(length(simul.y), length(simul.y)), 2)
+
         end
+        =#
 
         oldAppx = [simul.uFiltered; simul.uDerFiltered]
         
@@ -933,7 +1353,7 @@ function Waveholtz(simul::SEM_Wave, omega::Float64, fVals::Matrix{Float64}, bc, 
             println("maxIter reached for omega = " * string(omega))
         end
 
-        println("iteration: " * string(nIter) * " || residual: " * string(res))
+        #println("$omega || iteration: " * string(nIter) * " || residual: " * string(res))
 
     end
 
@@ -949,7 +1369,7 @@ function Waveholtz(simul::SEM_Wave, omega::Float64, fVals::Matrix{Float64}, bc, 
     Tend = 2*pi/omega
     delta_x = minimum(simul.x[2:end] - simul.x[1:end-1])
     delta_y = minimum(simul.y[2:end] - simul.y[1:end-1])
-    spaceStep = minimum([delta_x delta_y])
+    cMax = sqrt(maximum(simul.c_square))
     nsteps = Integer(ceil(1.5*Tend * cMax * (1/delta_x + 1/delta_y)))
 
     # starting guess
@@ -965,7 +1385,7 @@ function Waveholtz(simul::SEM_Wave, omega::Float64, fVals::Matrix{Float64}, bc, 
     while maxIter > nIter
         
         println("iteration: " * string(nIter) * " || residual: " * string(res))
-        
+
         SEM_Wave_2d.Simulate(simul, uStart, uStartDer, Tend, nsteps, fVals, omega, bc, g, animate)
 
         uStart = simul.uFiltered
@@ -1086,6 +1506,60 @@ function WaveholtzGMRES(simul::SEM_Wave, omega::Float64, fVals::Matrix{Float64},
 
 end
 
+function WaveholtzGMRESnew(simul::SEM_Wave, omega::Float64, fVals::Matrix{Float64}, bc, g, tol)
+
+    # Waveholtz-appropriate parameters for the wave solver
+    Tend = 2*pi/omega
+    delta_x = minimum(simul.x[2:end] - simul.x[1:end-1])
+    delta_y = minimum(simul.y[2:end] - simul.y[1:end-1])
+    cMax = sqrt(maximum(simul.c_square))
+
+    nsteps = Integer(ceil(Tend * cMax * (1/delta_x + 1/delta_y)))
+
+    timestep = Tend/nsteps
+
+    #println("time step size for the wave solver: " * string(timestep))
+
+    nx = length(simul.x)
+    ny = length(simul.y)
+    N = Int(length(simul.x) * length(simul.y)) # half of the number of degrees of freedoms of our system
+
+
+
+
+    
+
+    # perfrom one WH step on the zero vector, this will be the RHS of our linear system
+    uStart = zeros(ny, nx)
+    uStartDer = zeros(ny, nx)
+
+    SEM_Wave_2d.Simulate(simul, uStart, uStartDer, Tend, nsteps, fVals, omega, bc, g, false)
+    b = [reshape(simul.uFiltered, N, 1); reshape(simul.uDerFiltered, N, 1)]
+
+
+    function WaveholtzAction(vec)    
+
+        SEM_Wave_2d.Simulate(simul, Matrix(reshape(vec[1:Int(N)], ny, nx)), Matrix(reshape(vec[(Int(N)+1):end], ny, nx)), Tend, nsteps, fVals, omega, bc, g, false)        
+        w = vec - [reshape(simul.uFiltered, N, 1); reshape(simul.uDerFiltered, N, 1)] + b
+
+        return w
+        
+    end
+
+    WaveholtzMatVec = LinearMap(WaveholtzAction, 2*N) # the matvec as a linear map
+
+    #x, history = gmres(WaveholtzMatVec, b, verbose=true)
+
+    #x, history = gmres(WaveholtzMatVec, b, log=true, verbose=true, reltol=tol,  restart=100)    
+    x, history = gmres(WaveholtzMatVec, b, log=true, reltol=tol,  restart=100)    
+
+
+    u_0 = Matrix(reshape(x[1:N, 1], ny, nx))
+    u_1 = Matrix(reshape(x[N+1:end, 1], ny, nx))
+
+    return u_0, u_1, history
+
+end
 
 function WaveholtzConvGMRES(simul::SEM_Wave, omega::Float64, fVals::Matrix{Float64}, bc, g, nIter::Int64)
 
@@ -1184,7 +1658,6 @@ function WaveholtzConvGMRES(simul::SEM_Wave, omega::Float64, fVals::Matrix{Float
 
 end
 
-
 function WaveholtzAnimation(simul::SEM_Wave, omega::Float64, fVals::Matrix{Float64}, bc, g, maxIter::Int64, logscale = false)
 
     # Waveholtz-appropriate parameters for the wave solver
@@ -1261,7 +1734,8 @@ function WaveholtzAnimation(simul::SEM_Wave, omega::Float64, fVals::Matrix{Float
                 plotLow = 1.1*plotLow
             end
             
-            surface(simul.x, simul.y[end:-1:1], simul.uFiltered, zlims=(plotLow, plotHigh), legend=:false)
+            #surface(simul.x, simul.y[end:-1:1], simul.uFiltered, zlims=(plotLow, plotHigh), legend=:false)
+            surface(simul.x, simul.y[end:-1:1], simul.uFiltered, zlims=(-0.5, 0.5), legend=:false)
         end
         
         frame(anim) 
@@ -1272,7 +1746,7 @@ function WaveholtzAnimation(simul::SEM_Wave, omega::Float64, fVals::Matrix{Float
 
 end
 
-function WaveholtzConvHistory(simul::SEM_Wave, omega::Float64, fVals::Matrix{Float64}, bc, g, maxIter::Int64)
+function WaveholtzConvHistory(simul::SEM_Wave, omega::Float64, fVals::Matrix{Float64}, bc, g, maxIter::Int64, makePlot::Bool = true)
 
     ### produces a plot of the convergence history of nIter Waveholtz iterations
 
@@ -1281,9 +1755,15 @@ function WaveholtzConvHistory(simul::SEM_Wave, omega::Float64, fVals::Matrix{Flo
     Tend = 2*pi/omega
     delta_x = minimum(simul.x[2:end] - simul.x[1:end-1])
     delta_y = minimum(simul.y[2:end] - simul.y[1:end-1])
-    spaceStep = minimum([delta_x delta_y])
-    nsteps = Integer(ceil(1.5*Tend * (1/delta_x + 1/delta_y)))
+    cMax = sqrt(maximum(simul.c_square))
+    #nsteps = Integer(ceil(1.5*Tend * cMax * (1/delta_x + 1/delta_y)))
+    nsteps = Integer(ceil(Tend * cMax * (1/delta_x + 1/delta_y)))
+
+    nsteps = nsteps*2
     timestep = Tend/nsteps
+
+    println("Number of timesteps for waveholtz: " * string(nsteps) * " with a step size of " * string(timestep))
+    
 
     # starting guess
     uStart = zeros(length(simul.y), length(simul.x))
@@ -1292,24 +1772,34 @@ function WaveholtzConvHistory(simul::SEM_Wave, omega::Float64, fVals::Matrix{Flo
 
     animate = false     # we do not want any animations of the wave eq solutions
     res = NaN
-    
+
     nIter = 1
-    
+
     data = zeros(maxIter, 1)
 
     while maxIter+1 > nIter
-        
-        println("iteration: " * string(nIter) * " || residual: " * string(res))
-        
+
         SEM_Wave_2d.Simulate(simul, uStart, uStartDer, Tend, nsteps, fVals, omega, bc, g, animate)
+
+        #fValsH1Norm = (SEM_Wave_2d.LpNorm(simul, simul.fVals, zeros(length(simul.y), length(simul.x)), 2)^2 + SEM_Wave_2d.GradIntegral(simul, simul.fVals, simul.fVals))^(1/2)
+        #res = (SEM_Wave_2d.GradIntegral(simul, uStart - simul.uFiltered, uStart - simul.uFiltered) + SEM_Wave_2d.LpNorm(simul, uStartDer, simul.uDerFiltered, 2)^2)^(1/2) / fValsH1Norm
+
+
+        res = SEM_Wave_2d.SeminormWH(simul, uStart - simul.uFiltered, uStartDer - simul.uDerFiltered) / SEM_Wave_2d.SeminormWH(simul, uStart, uStartDer)
 
         uStart = simul.uFiltered
         uStartDer = simul.uDerFiltered
-        #uStartDer = zeros(length(simul.y), length(simul.x))
 
+        # seminorm in the residual relative to the H1-norm of fVals
+                
 
-        # relative residual
-        res = ErrorEstimate(simul, simul.uFiltered, fVals, omega)
+        #=
+        res = (LpNorm(simul, simul.uFiltered, oldAppx[1:length(simul.y), :], 2)^2 + 
+               LpNorm(simul, simul.uDerFiltered, oldAppx[length(simul.y) + 1:end, :], 2)^2)^(0.5) /
+              (LpNorm(simul, oldAppx[1:length(simul.y), :], zeros(length(simul.y), length(simul.x)), 2)^2 + 
+               LpNorm(simul, oldAppx[length(simul.y) + 1:end, :], zeros(length(simul.y), length(simul.x)), 2)^2)^0.5
+        =#
+
         data[nIter] = res
 
         #res = LpNorm(simul, simul.uFiltered, oldAppx[1:length(simul.y), :], 2)/LpNorm(simul, simul.uFiltered, zeros(length(simul.y), length(simul.y)), 2)
@@ -1318,11 +1808,17 @@ function WaveholtzConvHistory(simul::SEM_Wave, omega::Float64, fVals::Matrix{Flo
 
         nIter = nIter + 1
 
+        println("iteration: " * string(nIter) * " || residual: " * string(res))
+
     end
 
     #plt = plot(collect(LinRange(1, maxIter, maxIter)), xscale=:log10, yscale=:log10, data)
-    plt = plot(collect(LinRange(1, maxIter, maxIter)), data)
-    savefig(plt, "convHistory.png")
+    if makePlot
+        plt = plot(collect(LinRange(1, maxIter, maxIter)), data, yscale=:log10)
+        savefig(plt, "convHistory.png")
+    end
+
+    return oldAppx, data
 
 end
 
@@ -1407,6 +1903,157 @@ function LpNorm(simul::SEM_Wave, u::Matrix{Float64}, v::Matrix{Float64}, p::Int6
     return norm
 
 end
+
+function SeminormWH(simul::SEM_Wave, U_real::Matrix{Float64}, U_imag::Matrix{Float64})
+
+    # calculates that seminorm that the convergence of Waveholtz is monotone in
+
+    #println(SEM_Wave_2d.GradIntegral(simul, U_real, U_real)) # sometimes this becomes a small negative number, especially when the polynomial order is high.
+    #println(SEM_Wave_2d.LpNorm(simul, U_imag, zeros(length(simul.y), length(simul.x)), 2))
+
+    #the abs is there for stability reasons: sometimes the GradIntegral becomes -1e-14 or similar, and breaks this square root. I think this is due to float errors, as it gets worse with higher orders...
+    out = (abs(SEM_Wave_2d.GradIntegral(simul, U_real, U_real) + SEM_Wave_2d.LpNorm(simul, U_imag, zeros(length(simul.y), length(simul.x)), 2)^2))^(0.5)
+
+    return out
+
+end
+
+
+function GradIntegral(simul::SEM_Wave, U::Matrix{Float64}, V::Matrix{Float64})
+    ### calculates \int_\Omega c^2(x, y) \grad u \cdot \grad v dxdy where the nodal values of u and v are stored in the matrices U and V
+    ### a generalisation of LaplaceTerm
+
+
+    pointsPerElement = simul.N + 1                                      # number of quadrature points
+
+    Kx = length(simul.xNodes) - 1                                       # number of elements in the x-direction
+    Ky = length(simul.yNodes) - 1                                       # number of elements in the y-direction        
+
+    gradIntegral = 0.0                                                  # the final output will be a real number, with a contribution from each element
+
+    U_k = zeros(pointsPerElement, pointsPerElement)                     # the values of U in element k
+    V_k = zeros(pointsPerElement, pointsPerElement)                     # the values of V in element k
+    G = simul.G
+    D = simul.D
+
+    W = diagm(simul.QuadWeights)
+
+    for k = 1:Kx*Ky                                                     # loop over the elements and calculate \int_{\Omega_k} c^2(x, y) \grad u \cdot \grad v dxdy
+
+        i = mod(k - 1, Kx) + 1
+        j = Int((k - i) / Kx) + 1
+
+        delta_x_k = simul.xNodes[i+1] - simul.xNodes[i]
+        delta_y_k = simul.yNodes[j+1] - simul.yNodes[j]
+
+        U_k .= GetDegreesOfFreedom(simul, k, U)
+        V_k .= GetDegreesOfFreedom(simul, k, V)
+        c_square_k = GetDegreesOfFreedom(simul, k, simul.c_square)
+
+        xDerContribution = 0.0
+        yDerContribution = 0.0
+
+        for t = 1:pointsPerElement
+            
+            wt = simul.QuadWeights[t]
+
+            #At = transpose(simul.D) * W * diagm(c_square_k[t, :]) * simul.D
+            At = simul.DxMatrices[(k-1)*pointsPerElement + t]
+            #Bt = transpose(simul.D) * W * diagm(c_square_k[:, t]) * simul.D
+            Bt = simul.DyMatrices[(k-1)*pointsPerElement + t]
+
+            xSum = 0.0
+            ySum = 0.0
+
+            for l = 1:pointsPerElement
+                for m = 1:pointsPerElement 
+                    xSum = xSum + wt * U_k[l, t] * V_k[m, t] * At[l, m]
+                    ySum = ySum + wt * U_k[t, l] * V_k[t, m] * Bt[l, m]
+                end
+            end
+
+            xDerContribution = xDerContribution + (delta_y_k/delta_x_k) * xSum
+            yDerContribution = yDerContribution + (delta_x_k/delta_y_k) * ySum
+
+        end
+
+        gradIntegral_k = xDerContribution + yDerContribution
+        
+        gradIntegral = gradIntegral + gradIntegral_k
+
+    end
+
+
+    # I have had situations where this returns negative numbers of the order 1e-17
+    # I suppose these are zero up to flop-errors, and set them to zero in that case, so that Seminorm and SobolevNorm do not have issues down the line
+    if abs(gradIntegral) < 1e-16 # importantly, if there were a bug that made gradIntegral < -0.1, say, this would not hide that problem.
+        gradIntegral = 0.0
+    end
+
+    return gradIntegral
+
+end
+
+function SobolevNorm(simul::SEM_Wave, U::Matrix{Float64})
+
+    ### calculates the H1-norm of u whose values is stored in the matrix U
+    pointsPerElement = simul.N + 1                                      # number of quadrature points
+
+    Kx = length(simul.xNodes) - 1                                       # number of elements in the x-direction
+    Ky = length(simul.yNodes) - 1                                       # number of elements in the y-direction        
+
+    gradIntegral = 0.0                                                  # the final output will be a real number, with a contribution from each element
+
+    U_k = zeros(pointsPerElement, pointsPerElement)                     # the values of U in element k
+    G = simul.G
+    D = simul.D
+
+    W = diagm(simul.QuadWeights)
+
+    for k = 1:Kx*Ky                                                     # loop over the elements and calculate \int_{\Omega_k}  |\grad u|^2 dxdy
+
+        i = mod(k - 1, Kx) + 1
+        j = Int((k - i) / Kx) + 1
+
+        delta_x_k = simul.xNodes[i+1] - simul.xNodes[i]
+        delta_y_k = simul.yNodes[j+1] - simul.yNodes[j]
+
+        U_k .= GetDegreesOfFreedom(simul, k, U)
+
+        xDerContribution = 0.0
+        yDerContribution = 0.0
+
+        for t = 1:pointsPerElement
+            
+            wt = simul.QuadWeights[t]
+            DtWD = transpose(simul.D) * W * simul.D
+
+            xSum = 0.0
+            ySum = 0.0
+
+            for l = 1:pointsPerElement
+                for m = 1:pointsPerElement 
+                    xSum = xSum + wt * U_k[l, t] * U_k[m, t] * DtWD[l, m]
+                    ySum = ySum + wt * U_k[t, l] * U_k[t, m] * DtWD[l, m]
+                end
+            end
+
+            xDerContribution = xDerContribution + (delta_y_k/delta_x_k) * xSum
+            yDerContribution = yDerContribution + (delta_x_k/delta_y_k) * ySum
+
+        end
+
+        gradIntegral_k = xDerContribution + yDerContribution
+        
+        gradIntegral = gradIntegral + gradIntegral_k
+
+    end
+
+    return LpNorm(simul, U, zeros(length(simul.y), length(simul.x)), 2) + sqrt(gradIntegral)
+
+
+end
+
 
 function BoundaryDersMMS(simul::SEM_Wave, t::Float64)
     ### calculates the normal and time derivatives of the MMS solution on the boundary at time t for use in MMS tests
