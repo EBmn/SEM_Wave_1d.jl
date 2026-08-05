@@ -745,8 +745,101 @@ function SetElements(newNodes::SEM_Wave, uStart::Vector{Float64})
 
 end
 
+################ under construction ################
+function HelmholtzMatrix(simul::SEM_Wave, omega::Float64, bc, fVals)
+    # returns the matrix corresponding to the discrete Helmholtz operator
+
+    # setup boundary conditions and frequency
+    simul.bc = bc
+    simul.omega = omega
+
+    nx = length(simul.x)
+
+    Kx = length(simul.nodes) - 1
+
+    H = spzeros(nx, nx)
+
+    e_j = zeros(nx, 1)
+    Le_j = zeros(nx, 1)        
 
 
+    for j = 1:nx
+
+        prevIndex = maximum([j-1, 1])
+        e_j[prevIndex] = 0.0
+        e_j[j] = 1.0
+
+        kList = []
+
+        if (mod(j, simul.N) == 1) # if on the edge of an element
+            
+            if (j == 1) # if the first element
+                
+                kList = [kList; 1]
+
+            elseif (j == nx) # if the final element
+                
+                kList = [kList; Kx]
+
+            else # else on the edge between two elements
+
+                index1 = Int((j-1 - mod(j-1, simul.N)) / simul.N) + 1
+                index2 = index1 - 1
+
+                kList = [kList; index1; index2]
+            
+            end
+
+        end
+        
+        # reset matrix for storing the data 
+        Le_j .= zeros(size(e_j))        
+        
+        
+
+        for s = 1:length(kList)
+
+            k = kList[s]
+            SEM_Wave_1d.LocalLaplace!(simul, k, e_j, Le_j) # compute action of Laplacian, store the result in Le_j
+
+        end
+
+        # store data
+        H[:, j] .= Le_j
+
+        println("generated row $j out of $nx")
+
+    end
+
+    M = spdiagm(simul.M)
+    B = spdiagm((simul.bc[1]/simul.bc[2]) * simul.M_b)
+    H = (simul.omega^2 * M + (1im*simul.omega)*B + H)       # construct the Helmholtz operator
+    
+    F = M*fVals;                                            # the matrix F
+
+    return H, F
+
+end
+
+
+function LocalLaplace!(simul::SEM_Wave, k::Int64, U::Matrix{Float64}, laplaceVals::Vector{Float64})
+    # approximates the Laplacian of U in element k and stores the result in laplaceVals
+    # intended to replace the corresponding part of the code in LaplaceTerm by a function call
+
+    u_k = zeros(simul.N + 1)
+    v_k = zeros(simul.N + 1)
+    
+    G = simul.G
+    delta_x_k = simul.nodes[k+1] - simul.nodes[k]
+    u_k .= GetDegreesOfFreedom(simul, k, U)
+    x_k = simul.x[((k-1)*simul.N + 1):(k*simul.N + 1)]
+    
+    mul!(v_k, G, u_k.*simul.c_square.(x_k), 2/delta_x_k, 0)
+
+    SetDegreesOfFreedom!(simul, k, laplaceVals, v_k, true)
+
+
+end
 
 
 function WaveholtzAnimation(simul::SEM_Wave, omega::Float64, fVals::Vector{Float64}, nIter::Int64)
@@ -863,3 +956,4 @@ end
 
 
 end
+
