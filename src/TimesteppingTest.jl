@@ -78,7 +78,7 @@ function main()
     savefig(plt, "directSolimag.pdf")
 
 
-
+#=
     # perform gmres-accelerated WaveHoltz iterations
     tol = 1e-14
 
@@ -87,22 +87,22 @@ function main()
 
     simul.exactStep = true
     u_0, u_1, history = SEM_Wave_2d_Updated.WaveholtzGMRES(simul, omega, fVals, alphas, g, tol)
-
+=#
 
     
 
 
 
-    #=
+       
     # perform WaveHoltz iterations:
     tol = 5e-15
-    
-    #simul.exactStep = false
-    #v_0, v_1, nIter1 = SEM_Wave_2d_Updated.Waveholtz(simul, omega, fVals, alphas, g, tol)
+
+    simul.exactStep = false
+    v_0, v_1, nIter1 = SEM_Wave_2d_Updated.Waveholtz(simul, omega, fVals, alphas, g, tol)
 
     simul.exactStep = true
     u_0, u_1, nIter2 = SEM_Wave_2d_Updated.Waveholtz(simul, omega, fVals, alphas, g, tol)
-=#
+
 
 
     # compare with direct solution

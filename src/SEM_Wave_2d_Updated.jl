@@ -938,7 +938,6 @@ function Initialise!(simul::SEM_Wave, uStart::Matrix{Float64}, uStartDer::Matrix
     simul.uFiltered = zeros(length(simul.y), length(simul.x))
     simul.uDerFiltered = zeros(length(simul.y), length(simul.x))
 
-
     # if we are using MMS, we need to store the correct values in simul.c_square 
 
     if (simul.useMMS == true)
@@ -1436,13 +1435,12 @@ function Waveholtz(simul::SEM_Wave, omega::Float64, fVals::Matrix{Float64}, alph
     delta_x = minimum(simul.x[2:end] - simul.x[1:end-1])
     delta_y = minimum(simul.y[2:end] - simul.y[1:end-1])
     cMax = sqrt(maximum(simul.c_square))
-    nsteps = Integer(ceil(Tend * cMax * (1/delta_x + 1/delta_y)))    
-    #nsteps = Integer(ceil(0.85 * Tend * cMax * (1/delta_x + 1/delta_y)))
-    #println(nsteps)
+    nsteps = Integer(ceil(Tend * cMax * (1/delta_x + 1/delta_y)))
 
-    timestep = Tend/nsteps
+
 
     ############################################
+    #timestep = Tend/nsteps
     # now make that one more timestep, so that the central difference approximation of \partial_t u works at t = Tend
     #Tend = Tend + timestep
     #nsteps = nsteps + 1
@@ -1453,7 +1451,6 @@ function Waveholtz(simul::SEM_Wave, omega::Float64, fVals::Matrix{Float64}, alph
     # starting guess
     uStart = zeros(length(simul.y), length(simul.x))
     uStartDer = zeros(length(simul.y), length(simul.x))
-    oldAppx = zeros(2*length(simul.y), length(simul.x)) # stores uFiltered and uFilteredDer from the previous iteration
 
     animate = false     # we do not want any animations of the wave eq solutions
     res = Inf
@@ -1465,7 +1462,7 @@ function Waveholtz(simul::SEM_Wave, omega::Float64, fVals::Matrix{Float64}, alph
 
     while res > tol
 
-        to = TimerOutput()
+        #to = TimerOutput()
 
         SEM_Wave_2d_Updated.Simulate(simul, uStart, uStartDer, Tend, nsteps, fVals, omega, alphas, g, animate)
 
@@ -1473,23 +1470,14 @@ function Waveholtz(simul::SEM_Wave, omega::Float64, fVals::Matrix{Float64}, alph
 
         res = SEM_Wave_2d_Updated.SeminormWH(simul, uStart - simul.uFiltered, uStartDer - simul.uDerFiltered) / SEM_Wave_2d_Updated.SeminormWH(simul, uStart, uStartDer)
 
+        #println(maximum(abs.(simul.uFiltered)))
+        #println(maximum(abs.(simul.uDerFiltered)))
+
+
         #res = (SEM_Wave_2d.GradIntegral(simul, uStart - simul.uFiltered, uStart - simul.uFiltered) + SEM_Wave_2d.LpNorm(simul, uStartDer, simul.uDerFiltered, 2)^2)^(1/2) / 
         #        (SEM_Wave_2d.GradIntegral(simul, simul.fVals, simul.fVals))^(1/2)
 
 
-        #=
-        # we expect uStartDer to approximate omega*V in the limit.
-        u_expected = real((uStart + 1im*uStartDer/omega)*exp(-im*omega*Tend))
-        # note how Tend = 2*pi/omega means that u_expected always becomes uStart...
-        println(norm(simul.uNow - u_expected)/norm(u_expected))
-        println("coefficients: $(simul.stepCoeffs[1]), $(simul.stepCoeffs[2])")
-
-        println("difference between uFiltered and 1: " * string(simul.uFiltered[14, 15] - 1))
-        println("norm difference between uFiltered and 1: " * string(norm(simul.uFiltered .- 1)))
-
-        uStart = simul.uFiltered
-        uStartDer = simul.uDerFiltered
-        =#
 
         #=
         # relative residual
@@ -1501,7 +1489,8 @@ function Waveholtz(simul::SEM_Wave, omega::Float64, fVals::Matrix{Float64}, alph
         end
         =#
 
-        oldAppx = [simul.uFiltered; simul.uDerFiltered]
+        uStart .= simul.uFiltered
+        uStartDer .= simul.uDerFiltered
         
 
         nIter = nIter + 1
@@ -1511,11 +1500,11 @@ function Waveholtz(simul::SEM_Wave, omega::Float64, fVals::Matrix{Float64}, alph
             println("maxIter reached for omega = " * string(omega))
         end
 
-        println("$omega || iteration: " * string(nIter) * " || residual: " * string(res))
+        #println("$omega || iteration: " * string(nIter) * " || residual: " * string(res))
 
     end
 
-    
+
     return simul.uFiltered, simul.uDerFiltered, nIter
 
 end
@@ -1542,7 +1531,7 @@ function WaveholtzGMRES(simul::SEM_Wave, omega::Float64, fVals::Matrix{Float64},
 
     
     
-    println("$nsteps steps used for the GMRES-accelerated WaveHoltz")
+    #println("$nsteps steps used for the GMRES-accelerated WaveHoltz")
     #println("time step size for the wave solver: " * string(timestep))
 
     nx = length(simul.x)
@@ -1555,7 +1544,6 @@ function WaveholtzGMRES(simul::SEM_Wave, omega::Float64, fVals::Matrix{Float64},
     uStartDer = zeros(ny, nx)
 
     SEM_Wave_2d_Updated.Simulate(simul, uStart, uStartDer, Tend, nsteps, fVals, omega, alphas, g, false)
-
 
     b = [reshape(simul.uFiltered, N, 1); reshape(simul.uDerFiltered, N, 1)]
 
@@ -1572,8 +1560,57 @@ function WaveholtzGMRES(simul::SEM_Wave, omega::Float64, fVals::Matrix{Float64},
     WaveholtzMatVec = LinearMap(WaveholtzAction, 2*N) # the matvec as a LinearMap
 
     #x, history = gmres(WaveholtzMatVec, b, verbose=true)
-    x, history = gmres(WaveholtzMatVec, b, log=true, verbose=true, reltol=tol,  restart=1000)    
-    #x, history = gmres(WaveholtzMatVec, b, log=true, reltol=tol,  restart=100)    
+    #x, history = gmres(WaveholtzMatVec, b, log=true, verbose=false, reltol=tol,  restart=1000)    
+    x, history = gmres(WaveholtzMatVec, b, log=true, verbose=true, reltol=tol,  restart=10000)    
+
+    u_0 = Matrix(reshape(x[1:N, 1], ny, nx))
+    u_1 = Matrix(reshape(x[N+1:end, 1], ny, nx))
+
+    return u_0, u_1, history
+
+end
+
+
+function WaveholtzGMRES(simul::SEM_Wave, omega::Float64, fVals::Matrix{Float64}, alphas, g, nIter::Int64)
+
+    # almost entirely a copy of the other WaveHoltzGMRES-function. Updates should be made in the near future
+
+    # Waveholtz-appropriate parameters for the wave solver
+    Tend = 2*pi/omega
+    delta_x = minimum(simul.x[2:end] - simul.x[1:end-1])
+    delta_y = minimum(simul.y[2:end] - simul.y[1:end-1])
+    cMax = sqrt(maximum(simul.c_square))
+    nsteps = Integer(ceil(Tend * cMax * (1/delta_x + 1/delta_y)))
+    timestep = Tend/nsteps
+
+    nx = length(simul.x)
+    ny = length(simul.y)
+    N = Int(length(simul.x) * length(simul.y)) # half of the number of degrees of freedoms of our system
+    
+
+    # perfrom one WH step on the zero vector, this will be the RHS of our linear system
+    uStart = zeros(ny, nx)
+    uStartDer = zeros(ny, nx)
+
+    SEM_Wave_2d_Updated.Simulate(simul, uStart, uStartDer, Tend, nsteps, fVals, omega, alphas, g, false)
+
+    b = [reshape(simul.uFiltered, N, 1); reshape(simul.uDerFiltered, N, 1)]
+
+
+    function WaveholtzAction(vec)    
+
+        SEM_Wave_2d_Updated.Simulate(simul, Matrix(reshape(vec[1:Int(N)], ny, nx)), Matrix(reshape(vec[(Int(N)+1):end], ny, nx)), Tend, nsteps, fVals, omega, alphas, g, false)        
+        w = vec - [reshape(simul.uFiltered, N, 1); reshape(simul.uDerFiltered, N, 1)] + b    
+
+        return w
+        
+    end
+
+    WaveholtzMatVec = LinearMap(WaveholtzAction, 2*N) # the matvec as a LinearMap
+
+    #x, history = gmres(WaveholtzMatVec, b, verbose=true)
+    #x, history = gmres(WaveholtzMatVec, b, log=true, verbose=false, reltol=tol,  restart=1000)    
+    x, history = gmres(WaveholtzMatVec, b, restart = nIter, maxiter = nIter, reltol = 0.0, abstol = 0.0, log = true, verbose = true)
 
     u_0 = Matrix(reshape(x[1:N, 1], ny, nx))
     u_1 = Matrix(reshape(x[N+1:end, 1], ny, nx))
@@ -1885,6 +1922,7 @@ function HelmholtzMatrix(simul::SEM_Wave, omega::Float64, alphas, fVals)
 
 end
 
+
 function HelmholtzMatrixOld(simul::SEM_Wave, omega::Float64, alphas, fVals)
     # returns the matrix corresponding to the discrete Helmholtz operator (vectorised!)
 
@@ -1933,7 +1971,6 @@ function HelmholtzMatrixOld(simul::SEM_Wave, omega::Float64, alphas, fVals)
 end
 
 
-
 function LocalLaplace!(simul::SEM_Wave, k::Int64, U::Matrix{Float64}, laplaceVals::Matrix{Float64})
     # approximates the Laplacian of U in element k and stores the result in laplaceVals
     # intended to replace the corresponding part of the code in LaplaceTerm by a function call
@@ -1966,9 +2003,7 @@ function LocalLaplace!(simul::SEM_Wave, k::Int64, U::Matrix{Float64}, laplaceVal
 end
 
 
-
-
-# does not work!
+# does not work as intended yet!
 function DirectSolveGMRES(simul::SEM_Wave, omega::Float64, fVals::Matrix{Float64}, alphas, g, tol)
 
 
@@ -2033,7 +2068,7 @@ function ErrorEstimate(simul::SEM_Wave, u::Matrix{Float64}, fVals::Matrix{Float6
     
     ### should estimate || Laplace u + omega^2 u - f ||_{interior nodes} + || alpha u + \beta \omega \partial_n u ||_{boundary}, which should show whether u is a good approximation to the corresponding PDE solution
 
-    println("ErrorEstimate is under construction: do not use it unless you understand the risks")
+    println("ErrorEstimate is under construction: do not use it unless you understand the details!")
 
     laplaceVals = SEM_Wave_2d.LaplaceTerm(simul, u) / simul.timestep^2 # works since we will not look at the boundary, meaning that we can ignore the boundary integral
 
@@ -2119,16 +2154,16 @@ function SeminormWH(simul::SEM_Wave, U_real::Matrix{Float64}, U_imag::Matrix{Flo
     #println(SEM_Wave_2d.LpNorm(simul, U_imag, zeros(length(simul.y), length(simul.x)), 2))
 
     #the abs is there for stability reasons: sometimes the GradIntegral becomes -1e-14 or similar, and breaks this square root. I think this is due to float errors, as it gets worse with higher orders...
-    out = (abs(SEM_Wave_2d_Updated.GradIntegral(simul, U_real, U_real) + SEM_Wave_2d_Updated.LpNorm(simul, U_imag, zeros(length(simul.y), length(simul.x)), 2)^2))^(0.5)
+    out = (abs(SEM_Wave_2d_Updated.GradIntegralSeminorm(simul, U_real, U_real) + SEM_Wave_2d_Updated.LpNorm(simul, U_imag, zeros(length(simul.y), length(simul.x)), 2)^2))^(0.5)
 
     return out
 
 end
 
 
-function GradIntegral(simul::SEM_Wave, U::Matrix{Float64}, V::Matrix{Float64})
+function GradIntegralSeminorm(simul::SEM_Wave, U::Matrix{Float64}, V::Matrix{Float64})
     ### calculates \int_\Omega c^2(x, y) \grad u \cdot \grad v dxdy where the nodal values of u and v are stored in the matrices U and V
-    ### a generalisation of LaplaceTerm
+    ### for use in SeminormWH
 
 
     pointsPerElement = simul.N + 1                                      # number of quadrature points
@@ -2155,7 +2190,7 @@ function GradIntegral(simul::SEM_Wave, U::Matrix{Float64}, V::Matrix{Float64})
 
         U_k .= GetDegreesOfFreedom(simul, k, U)
         V_k .= GetDegreesOfFreedom(simul, k, V)
-        c_square_k = GetDegreesOfFreedom(simul, k, simul.c_square)
+        c_square_k = GetDegreesOfFreedom(simul, k, simul.c_square) # superfluous?
 
         xDerContribution = 0.0
         yDerContribution = 0.0
@@ -2193,7 +2228,7 @@ function GradIntegral(simul::SEM_Wave, U::Matrix{Float64}, V::Matrix{Float64})
 
     # I have had situations where this returns negative numbers of the order 1e-17
     # I suppose these are zero up to flop-errors, and set them to zero in that case, so that Seminorm and SobolevNorm do not have issues down the line
-    if abs(gradIntegral) < 1e-16 # importantly, if there were a bug that made gradIntegral < -0.1, say, this would not hide that problem.
+    if abs(gradIntegral) < 1e-12 # importantly, if there were a bug that made gradIntegral < -1e-12, say, this would not hide that problem.
         gradIntegral = 0.0
     end
 
@@ -2201,9 +2236,87 @@ function GradIntegral(simul::SEM_Wave, U::Matrix{Float64}, V::Matrix{Float64})
 
 end
 
-function SobolevNorm(simul::SEM_Wave, U::Matrix{Float64})
+function GradIntegral(simul::SEM_Wave, U::Matrix{Float64}, V::Matrix{Float64})
+    ### calculates \int_\Omega \grad u \cdot \grad v dxdy where the nodal values of u and v are stored in the matrices U and V
+    ### for use in SobolevNorm
 
-    ### calculates the H1-norm of u whose values is stored in the matrix U
+
+    pointsPerElement = simul.N + 1                                      # number of quadrature points
+
+    Kx = length(simul.xNodes) - 1                                       # number of elements in the x-direction
+    Ky = length(simul.yNodes) - 1                                       # number of elements in the y-direction        
+
+    gradIntegral = 0.0                                                  # the final output will be a real number, with a contribution from each element
+
+    U_k = zeros(pointsPerElement, pointsPerElement)                     # the values of U in element k
+    V_k = zeros(pointsPerElement, pointsPerElement)                     # the values of V in element k
+    G = simul.G
+    D = simul.D
+    
+
+    W = diagm(simul.QuadWeights)
+
+    for k = 1:Kx*Ky                                                     # loop over the elements and calculate \int_{\Omega_k} \grad u \cdot \grad v dxdy
+
+
+        c_square_k = GetDegreesOfFreedom(simul, k, simul.c_square) # superfluous?
+
+        i = mod(k - 1, Kx) + 1
+        j = Int((k - i) / Kx) + 1
+
+        delta_x_k = simul.xNodes[i+1] - simul.xNodes[i]
+        delta_y_k = simul.yNodes[j+1] - simul.yNodes[j]
+
+        U_k .= GetDegreesOfFreedom(simul, k, U)
+        V_k .= GetDegreesOfFreedom(simul, k, V)
+
+        xDerContribution = 0.0
+        yDerContribution = 0.0
+
+        for t = 1:pointsPerElement
+
+            wt = simul.QuadWeights[t]
+
+
+            # like the matrices in simul.DxMatrices, simul.DyMatrices, but with c^2 = 1.0...
+            At = (delta_y_k/delta_x_k) * transpose(simul.D) * W * simul.D
+            Bt = (delta_x_k/delta_y_k) * transpose(simul.D) * W * simul.D
+            
+            xSum = 0.0
+            ySum = 0.0
+
+            for l = 1:pointsPerElement
+                for m = 1:pointsPerElement 
+                    xSum = xSum + wt * U_k[l, t] * V_k[m, t] * At[l, m]
+                    ySum = ySum + wt * U_k[t, l] * V_k[t, m] * Bt[l, m]
+                end
+            end
+
+            xDerContribution = xDerContribution + (delta_y_k/delta_x_k) * xSum
+            yDerContribution = yDerContribution + (delta_x_k/delta_y_k) * ySum
+
+        end
+
+        gradIntegral_k = xDerContribution + yDerContribution
+        gradIntegral = gradIntegral + gradIntegral_k
+
+    end
+
+
+    # I have had situations where this returns negative numbers of the order 1e-17
+    # I suppose these are zero up to flop-errors, and set them to zero in that case, so that Seminorm and SobolevNorm do not have issues down the line
+    if abs(gradIntegral) < 1e-16 # importantly, if there were a bug that made gradIntegral < -1e-12, say, this would not hide that problem.
+        gradIntegral = 0.0
+    end
+
+    return gradIntegral
+
+end
+
+function SobolevNormOld(simul::SEM_Wave, U::Matrix{Float64}, k::Float64)
+
+    ### calculates the H_1^k-norm of u whose values is stored in the matrix U, i.e. \|U\|_{L^2} + k^{-2}\|\nabla U\|_{L^2}
+
     pointsPerElement = simul.N + 1                                      # number of quadrature points
 
     Kx = length(simul.xNodes) - 1                                       # number of elements in the x-direction
@@ -2256,10 +2369,20 @@ function SobolevNorm(simul::SEM_Wave, U::Matrix{Float64})
 
     end
 
-    return LpNorm(simul, U, zeros(length(simul.y), length(simul.x)), 2) + sqrt(gradIntegral)
+    return LpNorm(simul, U, zeros(length(simul.y), length(simul.x)), 2) + sqrt(gradIntegral) / k^2
 
 
 end
+
+function SobolevNorm(simul::SEM_Wave, U::Matrix{Float64}, k::Float64)
+
+    ### calculates the H_1^k-norm of u whose values is stored in the matrix U, i.e. \|U\|_{L^2} + k^{-2}\|\nabla U\|_{L^2}
+
+    return (LpNorm(simul, U, zeros(length(simul.y), length(simul.x)), 2)^2 + GradIntegral(simul, U, U) / k^2)^(0.5)
+
+
+end
+
 
 
 function BoundaryDersMMS(simul::SEM_Wave, t::Float64)

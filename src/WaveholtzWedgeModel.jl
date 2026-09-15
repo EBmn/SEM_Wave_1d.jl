@@ -161,7 +161,7 @@ function frequencySweep()
     #nT = Threads.nthreads()
     nT = Threads.maxthreadid()
     current_omega = fill(NaN, nT)
-    
+
     n = length(omegas)
 
     ch = Channel{Int}(n)

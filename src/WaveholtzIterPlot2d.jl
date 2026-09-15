@@ -332,7 +332,7 @@ function frequencySweepBox()
     
     # plot the result
 
-    plt = plot(omegas, whIters, yscale=:log10, label="Waveholtz iteration", legend=:bottomleft)
+    plt = plot(omegas, whIters, yscal10e=:log10, label="Waveholtz iteration", legend=:bottomleft)
     plot!(omegas, gmresIters, yscale=:log10, label="gmres iterations", legend=:bottomleft)
 
     savefig(plt, "BoxIterPlot")

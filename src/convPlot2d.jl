@@ -91,10 +91,6 @@ function main()
 
             SEM_Wave_2d.Simulate(simul, uStart, uStartDer, Tend, nsteps, fVals, omega, bc, g, false)
 
-            if j == length(numberOfElements)
-                reference = zeros(length(simul.y), length(simul.x))
-            end
-
 
             ### Compare to finest run ###
 
