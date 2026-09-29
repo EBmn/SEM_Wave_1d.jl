@@ -620,13 +620,7 @@ function convHistoryWedgeNewNorm()
 
 
 
-#=
-    # box model
-    xl = 0.0
-    xr = 1.0
-    yl = 0.0
-    yr = 2.0
-=#
+
 
     alphas = [0.0; 0.0; 0.0; 0.0]
     
@@ -954,6 +948,7 @@ function WedgePlotData()
 
 
     alphas = [0.0; 0.0; 0.0; 0.0]
+    
     
     omega = 100.0
     tol = 1e-9
